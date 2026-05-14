@@ -17,11 +17,21 @@ app = FastAPI(
 # CORS - Allow all origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # ✅ Allow all origins (you can restrict this later)
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,  # ⚠️ CHANGED: False when using "*"
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+
+@app.middleware("http")
+async def add_cors_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
 
 
 # Pydantic models for request validation
