@@ -1,0 +1,19 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="premium" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Clean rounded background -->
+  <rect width="64" height="64" rx="18" fill="url(#premium)"/>
+  
+  <!-- Minimalist "A" for AI -->
+  <path d="M32 16 L46 48 L40 48 L37 40 L27 40 L24 48 L18 48 Z M29 34 L35 34 L32 24 Z" 
+        fill="white" 
+        fill-rule="evenodd"/>
+  
+  <!-- Subtle tech accent -->
+  <circle cx="32" cy="20" r="1.5" fill="#22d3a0"/>
+</svg>
