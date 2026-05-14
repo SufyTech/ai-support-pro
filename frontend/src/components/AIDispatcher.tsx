@@ -68,12 +68,20 @@ export default function AIDispatcher({ onTicketCreated }: AIDispatcherProps) {
         onTicketCreated(newTicket);
       }
 
+      // ✅ NEW: Scroll to ticket list section
+      setTimeout(() => {
+        const ticketSection = document.getElementById("ticket-list");
+        if (ticketSection) {
+          ticketSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 500);
+
       // Clear form after success
       setTimeout(() => {
         setSubject("");
         setDescription("");
         setResult(null);
-      }, 3000);
+      }, 5000); // ✅ Changed from 3000 to 5000 (more time to see result)
     } catch (err: any) {
       setError(err.message || "Failed to create ticket. Please try again.");
     } finally {

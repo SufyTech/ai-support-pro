@@ -77,7 +77,7 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
 
   if (loading) {
     return (
-      <section className="py-24 bg-surface/10">
+      <section id="ticket-list" className="py-24 bg-surface/20">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <h2 className="text-3xl md:text-4xl font-display font-black text-center mb-12">
             Live Ticket Stream
@@ -110,7 +110,7 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
 
   if (tickets.length === 0) {
     return (
-      <section className="py-24 bg-surface/10">
+      <section id="ticket-list" className="py-24 bg-surface/10">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -134,7 +134,7 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
   }
 
   return (
-    <section className="py-24 bg-surface/10">
+    <section id="ticket-list" className="py-24 bg-surface/10">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -165,111 +165,137 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
           viewport={viewportConfig}
           className="space-y-4"
         >
-          {tickets
-            .slice()
-            .reverse()
-            .map((ticket, index) => {
-              const priorityConfig = getPriorityConfig(ticket.priority);
-              const statusConfig = getStatusConfig(ticket.status);
-              const PriorityIcon = priorityConfig.icon;
+          {tickets.map((ticket, index) => {
+            const priorityConfig = getPriorityConfig(ticket.priority);
+            const statusConfig = getStatusConfig(ticket.status);
+            const PriorityIcon = priorityConfig.icon;
 
-              return (
-                <motion.div
-                  key={ticket.id}
-                  variants={fadeInUp}
-                  whileHover={{ scale: 1.01, y: -2 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-6 hover:border-accent/30 transition-all group shadow-lg hover:shadow-[0_10px_40px_rgba(108,108,255,0.15)] relative overflow-hidden"
-                >
-                  {/* Gradient overlay on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+            return (
+              <motion.div
+                key={ticket.id}
+                variants={fadeInUp}
+                initial={{ opacity: 0, scale: 0.95, y: -20 }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  y: 0,
+                  ...(index === 0 && {
+                    boxShadow: [
+                      "0 0 0 0 rgba(108, 108, 255, 0)",
+                      "0 0 20px 10px rgba(108, 108, 255, 0.3)",
+                      "0 0 0 0 rgba(108, 108, 255, 0)",
+                    ],
+                  }),
+                }}
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.05,
+                  boxShadow: { duration: 2, repeat: index === 0 ? 2 : 0 },
+                }}
+                whileHover={{ scale: 1.01, y: -2 }}
+                className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-6 hover:border-accent/30 transition-all group shadow-lg hover:shadow-[0_10px_40px_rgba(108,108,255,0.15)] relative overflow-hidden"
+              >
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 relative z-10">
-                    <div className="flex-1">
-                      {/* Header with badges */}
-                      <div className="flex flex-wrap items-center gap-3 mb-3">
-                        <h3 className="font-display font-bold text-xl text-text-primary group-hover:text-accent transition-colors">
-                          {ticket.subject}
-                        </h3>
+                {/* NEW badge for first ticket */}
+                {index === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="absolute top-4 left-4 px-2 py-1 bg-accent text-white text-xs font-bold rounded uppercase tracking-wider z-20"
+                  >
+                    New
+                  </motion.div>
+                )}
 
-                        <span
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border flex items-center gap-1.5 ${priorityConfig.color} ${priorityConfig.glow} shadow-lg`}
-                        >
-                          <PriorityIcon className="w-3.5 h-3.5" />
-                          {ticket.priority}
-                        </span>
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 relative z-10">
+                  <div className="flex-1">
+                    {/* Header with badges */}
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
+                      <h3 className="font-display font-bold text-xl text-text-primary group-hover:text-accent transition-colors">
+                        {ticket.subject}
+                      </h3>
 
-                        <span
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border ${statusConfig.color} shadow-lg`}
-                        >
-                          <span className="mr-1">{statusConfig.icon}</span>
-                          {ticket.status}
-                        </span>
+                      <span
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border flex items-center gap-1.5 ${priorityConfig.color} ${priorityConfig.glow} shadow-lg`}
+                      >
+                        <PriorityIcon className="w-3.5 h-3.5" />
+                        {ticket.priority}
+                      </span>
+
+                      <span
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border ${statusConfig.color} shadow-lg`}
+                      >
+                        <span className="mr-1">{statusConfig.icon}</span>
+                        {ticket.status}
+                      </span>
+                    </div>
+
+                    {/* Description */}
+                    {ticket.description && (
+                      <p className="text-text-secondary text-sm mb-4 leading-relaxed">
+                        {ticket.description}
+                      </p>
+                    )}
+
+                    {/* Category */}
+                    {ticket.category && (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 text-accent text-xs font-bold rounded-lg mb-4 border border-accent/20">
+                        <User className="w-3.5 h-3.5" />
+                        {ticket.category}
                       </div>
+                    )}
 
-                      {/* Description */}
-                      {ticket.description && (
-                        <p className="text-text-secondary text-sm mb-4 leading-relaxed">
-                          {ticket.description}
-                        </p>
-                      )}
-
-                      {/* Category */}
-                      {ticket.category && (
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 text-accent text-xs font-bold rounded-lg mb-4 border border-accent/20">
-                          <User className="w-3.5 h-3.5" />
-                          {ticket.category}
-                        </div>
-                      )}
-
-                      {/* AI Reply */}
-                      {(ticket as any).suggestedReply && (
+                    {/* AI Reply */}
+                    {(ticket as any).suggestedReply && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        transition={{ delay: 0.3 }}
+                        className="mt-4 p-5 bg-surface/40 rounded-xl border border-accent/20 relative overflow-hidden group/reply"
+                      >
+                        {/* Shimmer effect */}
                         <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          transition={{ delay: 0.3 }}
-                          className="mt-4 p-5 bg-surface/40 rounded-xl border border-accent/20 relative overflow-hidden group/reply"
-                        >
-                          {/* Shimmer effect */}
-                          <motion.div
-                            animate={{ x: ["-100%", "100%"] }}
-                            transition={{
-                              duration: 3,
-                              repeat: Infinity,
-                              ease: "linear",
-                            }}
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/5 to-transparent pointer-events-none"
-                          />
+                          animate={{ x: ["-100%", "100%"] }}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "linear",
+                          }}
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/5 to-transparent pointer-events-none"
+                        />
 
-                          <div className="flex items-center gap-2 mb-3 relative z-10">
-                            <Sparkles className="w-4 h-4 text-accent" />
-                            <div className="text-xs font-bold text-accent uppercase tracking-wider">
-                              AI-Generated Reply
-                            </div>
+                        <div className="flex items-center gap-2 mb-3 relative z-10">
+                          <Sparkles className="w-4 h-4 text-accent" />
+                          <div className="text-xs font-bold text-accent uppercase tracking-wider">
+                            AI-Generated Reply
                           </div>
-                          <p className="text-text-primary text-sm leading-relaxed relative z-10 group-hover/reply:text-text-primary transition-colors">
-                            {(ticket as any).suggestedReply}
-                          </p>
-                        </motion.div>
-                      )}
-                    </div>
-
-                    {/* Timestamp */}
-                    <div className="flex items-center gap-2 text-xs text-text-muted whitespace-nowrap">
-                      <Clock className="w-3.5 h-3.5" />
-                      {new Date(ticket.createdAt).toLocaleString()}
-                    </div>
+                        </div>
+                        <p className="text-text-primary text-sm leading-relaxed relative z-10 group-hover/reply:text-text-primary transition-colors">
+                          {(ticket as any).suggestedReply}
+                        </p>
+                      </motion.div>
+                    )}
                   </div>
 
-                  {/* Ticket number badge */}
-                  <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface/50 border border-border-soft flex items-center justify-center opacity-40 group-hover:opacity-70 transition-opacity">
-                    <span className="text-xs font-bold text-text-muted">
-                      #{tickets.length - index}
-                    </span>
+                  {/* Timestamp */}
+                  <div className="flex items-center gap-2 text-xs text-text-muted whitespace-nowrap">
+                    <Clock className="w-3.5 h-3.5" />
+                    {new Date(ticket.createdAt).toLocaleString()}
                   </div>
-                </motion.div>
-              );
-            })}
+                </div>
+
+                {/* Ticket number badge */}
+                <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface/50 border border-border-soft flex items-center justify-center opacity-40 group-hover:opacity-70 transition-opacity">
+                  <span className="text-xs font-bold text-text-muted">
+                    #{index + 1}
+                  </span>
+                </div>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

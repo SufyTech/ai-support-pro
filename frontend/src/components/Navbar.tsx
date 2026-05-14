@@ -190,7 +190,7 @@ export default function Navbar() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  href="https://github.com/yourusername/ai-support-pro"
+                  href="https://github.com/SufyTech/ai-support-pro"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary font-medium hover:bg-surface/50 hover:text-accent transition-all border border-border-soft"
