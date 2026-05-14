@@ -109,7 +109,7 @@ async def get_tickets():
             "priority": "high",
             "status": "open",
             "suggestedReply": "Please try resetting your password using the 'Forgot Password' link.",
-            "created_at": "2026-05-14T18:30:00Z"
+            "createdAt": "2026-05-14T18:30:00Z"
         },
         {
             "id": "TICK-002",
@@ -119,7 +119,7 @@ async def get_tickets():
             "priority": "high",
             "status": "in_progress",
             "suggestedReply": "We apologize for the inconvenience. Our billing team will review your account and process a refund within 3-5 business days.",
-            "created_at": "2026-05-14T17:15:00Z"
+            "createdAt": "2026-05-14T17:15:00Z"
         },
         {
             "id": "TICK-003",
@@ -129,7 +129,7 @@ async def get_tickets():
             "priority": "low",
             "status": "open",
             "suggestedReply": "Thank you for your suggestion! We've added this to our product roadmap.",
-            "created_at": "2026-05-14T16:00:00Z"
+            "createdAt": "2026-05-14T16:00:00Z"
         }
     ]
 
@@ -139,11 +139,13 @@ async def get_tickets():
 async def get_ticket_stats():
     """Get ticket statistics and analytics"""
     return {
-        "total": 150,
+        "totalTickets": 150,
         "open": 35,
         "in_progress": 45,
         "resolved": 70,
-        "avg_response_time": "1.8 seconds",
+        "avgResponseSeconds": "1.8 seconds",
+        "autoResolvedPercent": 92,
+        "monthlySavingsUsd": 12500,
         "satisfaction_rate": 4.7,
         "automation_rate": "92%",
         "categories": {
@@ -192,7 +194,7 @@ async def create_ticket(ticket: TicketCreate):
         "priority": priority,
         "status": "open",
         "suggestedReply": suggested_reply,
-        "created_at": datetime.now().isoformat() + "Z",
+        "createdAt": datetime.now().isoformat() + "Z",
         "assigned_agent": "AI Triage Agent"
     }
 
