@@ -1,5 +1,3 @@
-<img width="1881" height="867" alt="image" src="https://github.com/user-attachments/assets/b19ac45d-4c05-47aa-81da-56284bc595f0" /><div align="center">
-
 # 🚀 AI Support Pro
 
 ### Autonomous Multi-Agent Customer Support System
