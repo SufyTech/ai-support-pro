@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
+
 app = FastAPI(
     title="AI Support Pro API",
     description="Multi-Agent Customer Support System",
@@ -10,9 +11,11 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+
 # Get allowed origins from environment
 CLIENT_ORIGIN = os.getenv("CLIENT_ORIGIN", "*")
 allowed_origins = [CLIENT_ORIGIN] if CLIENT_ORIGIN != "*" else ["*"]
+
 
 # CORS
 app.add_middleware(
@@ -23,7 +26,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
+@app.head("/")  # ✅ Added HEAD support for UptimeRobot
 def read_root():
     return {
         "message": "🚀 AI Support Pro API is running!",
@@ -33,11 +38,15 @@ def read_root():
         "allowed_origins": allowed_origins
     }
 
+
 @app.get("/health")
+@app.head("/health")  # ✅ Added HEAD support for UptimeRobot
 def health_check():
     return {"status": "healthy", "service": "AI Support Pro"}
 
+
 @app.get("/api/status")
+@app.head("/api/status")  # ✅ Added HEAD support
 def api_status():
     return {
         "api": "online",
@@ -49,7 +58,9 @@ def api_status():
         }
     }
 
+
 @app.get("/api/agents")
+@app.head("/api/agents")  # ✅ Added HEAD support
 def get_agents():
     return {
         "agents": [
@@ -59,6 +70,7 @@ def get_agents():
             {"name": "Escalation Agent", "status": "active"}
         ]
     }
+
 
 if __name__ == "__main__":
     import uvicorn
