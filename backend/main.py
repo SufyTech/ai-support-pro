@@ -143,7 +143,7 @@ async def get_ticket_stats():
         "open": 35,
         "in_progress": 45,
         "resolved": 70,
-        "avgResponseSeconds": "1.8 seconds",
+        "avgResponseSeconds": 108,
         "autoResolvedPercent": 92,
         "monthlySavingsUsd": 12500,
         "satisfaction_rate": 4.7,

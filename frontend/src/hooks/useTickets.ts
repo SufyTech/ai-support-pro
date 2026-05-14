@@ -1,28 +1,35 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Ticket } from '../types.ts';
-import { getTickets } from '../api/client.ts';
+import { useState, useEffect, useCallback } from "react";
+import { getTickets } from "../api/client";
+import { Ticket } from "../types";
 
 export function useTickets() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const refresh = useCallback(async () => {
+  const fetchTickets = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await getTickets();
       setTickets(data);
-      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch tickets');
+      setError(err instanceof Error ? err.message : "Failed to fetch tickets");
+      console.error("Error fetching tickets:", err);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    refresh();
-  }, [refresh]);
+    fetchTickets();
+  }, [fetchTickets]);
 
-  return { tickets, loading, error, refresh };
+  return {
+    tickets,
+    setTickets, // ✅ EXPOSE setTickets for manual updates
+    loading,
+    error,
+    refresh: fetchTickets,
+  };
 }
