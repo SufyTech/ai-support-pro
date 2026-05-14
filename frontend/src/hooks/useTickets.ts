@@ -27,7 +27,7 @@ export function useTickets() {
 
   return {
     tickets,
-    setTickets, // ✅ EXPOSE setTickets for manual updates
+    setTickets, 
     loading,
     error,
     refresh: fetchTickets,

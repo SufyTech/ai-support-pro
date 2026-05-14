@@ -3,11 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import Navbar from "./components/Navbar.tsx";
 import Hero from "./components/Hero.tsx";
 import SocialProof from "./components/SocialProof.tsx";
@@ -20,24 +15,32 @@ import Security from "./components/Security.tsx";
 import Contact from "./components/Contact.tsx";
 import Footer from "./components/Footer.tsx";
 import TicketList from "./components/TicketList.tsx";
+import AIDispatcher from "./components/AIDispatcher.tsx"; // ✅ ADDED
 
 import { useTickets } from "./hooks/useTickets.ts";
 import { useTicketStats } from "./hooks/useTicketStats.ts";
+import { Ticket } from "./types.ts"; // ✅ ADDED
 
 export default function App() {
   const {
     tickets,
     loading: ticketsLoading,
     refresh: refreshTickets,
+    setTickets, // ✅ ADDED - This is the KEY fix
   } = useTickets();
+
   const {
     stats,
     loading: statsLoading,
     refresh: refreshStats,
   } = useTicketStats();
 
-  const handleTicketCreated = () => {
-    refreshTickets();
+  // ✅ UPDATED - Now accepts the new ticket and adds it immediately
+  const handleTicketCreated = (newTicket: Ticket) => {
+    // Add new ticket to the TOP of the list immediately
+    setTickets((prevTickets) => [newTicket, ...prevTickets]);
+
+    // Refresh stats
     refreshStats();
   };
 
@@ -63,6 +66,10 @@ export default function App() {
         <Agents />
         <HowItWorks />
         <Metrics stats={stats} loading={statsLoading} />
+
+        {/* ✅ ADDED - New AI Dispatcher component */}
+        <AIDispatcher onTicketCreated={handleTicketCreated} />
+
         <TicketList tickets={tickets} loading={ticketsLoading} />
         <Pricing />
         <Security />
