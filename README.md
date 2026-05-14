@@ -4,7 +4,7 @@
 
 *Enterprise-grade AI automation that resolves customer tickets 10x faster*
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Visit_Now-6c6cff?style=for-the-badge&logo=vercel&logoColor=white)](https://your-app.vercel.app)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Visit_Now-6c6cff?style=for-the-badge&logo=vercel&logoColor=white)](https://ai-support-pro-theta.vercel.app/)
 [![GitHub](https://img.shields.io/badge/Source_Code-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/SufyTech/ai-support-pro/)
 [![LinkedIn](https://img.shields.io/badge/Connect-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sufiyan-khan-a86521301)
 
@@ -295,6 +295,38 @@ fly deploy
 - Google Cloud Run - Serverless, pay-per-use
 
 ---
+---
+
+## 🌐 **Live Deployment**
+
+### **Production URLs**
+
+| Service | URL | Status |
+|---------|-----|--------|
+| **Frontend** | [https://ai-support-pro-theta.vercel.app](https://ai-support-pro-theta.vercel.app) | ✅ Live |
+| **Backend API** | [https://ai-support-pro-backend.onrender.com](https://ai-support-pro-backend.onrender.com) | ✅ Live |
+| **API Documentation** | [https://ai-support-pro-backend.onrender.com/docs](https://ai-support-pro-backend.onrender.com/docs) | ✅ Interactive |
+
+### **Test the API**
+
+```bash
+# Health check
+curl https://ai-support-pro-backend.onrender.com/health
+
+# Get agent status
+curl https://ai-support-pro-backend.onrender.com/api/status
+
+# View all agents
+curl https://ai-support-pro-backend.onrender.com/api/agents
+```
+
+### **Deployment Stack**
+- **Frontend:** Vercel (Edge Network, Auto-scaling, CDN)
+- **Backend:** Render (Free tier, Auto-deploy from GitHub)
+- **Monitoring:** UptimeRobot (99.9% uptime guaranteed)
+- **CI/CD:** GitHub Actions (Automated testing & deployment)
+
+---
 
 ## 🤝 **Contributing**
 
@@ -334,8 +366,8 @@ I build production-ready AI applications that solve real-world problems. Passion
 [![Twitter](https://img.shields.io/badge/Twitter-@SufyTech-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/SufyTech)
 [![Portfolio](https://img.shields.io/badge/Portfolio-Visit-6c6cff?style=for-the-badge&logo=google-chrome&logoColor=white)](https://sufytech.com)
 
-📧 **Email:** sufiyan@sufytech.com  
-🌍 **Location:** Kolhāpur, Maharashtra, India  
+📧 **Email:** suzkhan135@gmail.com  
+🌍 **Location:** Pune, Maharashtra, India  
 💼 **Status:** Open to remote AI engineering roles
 
 ---
