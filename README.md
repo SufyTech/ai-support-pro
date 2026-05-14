@@ -1,4 +1,4 @@
-<div align="center">
+<img width="1881" height="867" alt="image" src="https://github.com/user-attachments/assets/b19ac45d-4c05-47aa-81da-56284bc595f0" /><div align="center">
 
 # 🚀 AI Support Pro
 
@@ -18,7 +18,8 @@
 
 <br/>
 
-![AI Support Pro Banner](https://via.placeholder.com/1200x500/0a0a0f/6c6cff?text=AI+Support+Pro+%7C+Autonomous+Support+System)
+<img width="1881" height="867" alt="image" src="https://github.com/user-attachments/assets/aa5cf00b-7312-42b0-a4fa-da10d92aa212" />
+
 
 <p align="center">
   <strong>🏆 Built with production-grade AI • ⚡ Sub-2s response times • 🤖 90% automation rate</strong>
