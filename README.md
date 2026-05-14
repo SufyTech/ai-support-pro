@@ -199,58 +199,6 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 # → http://localhost:8000/docs
 ```
-
----
-
-## 📁 **Project Structure**
-
-```
-ai-support-pro/
-│
-├── frontend/                   # React + TypeScript SPA
-│   ├── src/
-│   │   ├── components/        # Reusable UI components
-│   │   │   ├── Hero.tsx       # Hero section with CTA
-│   │   │   ├── Features.tsx   # Feature grid with icons
-│   │   │   ├── Pricing.tsx    # Pricing tiers
-│   │   │   ├── Solutions.tsx  # Integration showcase
-│   │   │   └── Footer.tsx     # Footer with social links
-│   │   ├── lib/
-│   │   │   └── motionPresets.ts  # Framer Motion configs
-│   │   ├── App.tsx            # Main app component
-│   │   └── main.tsx           # Entry point
-│   ├── public/
-│   │   └── favicon.svg        # Custom AI-themed favicon
-│   └── package.json
-│
-├── backend/                    # FastAPI backend
-│   ├── app/
-│   │   ├── agents/            # AI agent implementations
-│   │   │   ├── triage.py      # Ticket classification
-│   │   │   ├── knowledge.py   # Knowledge base search
-│   │   │   ├── response.py    # Response generation
-│   │   │   └── escalation.py  # Human handoff logic
-│   │   ├── api/               # REST API routes
-│   │   ├── core/              # Config, settings
-│   │   ├── models/            # Database models
-│   │   └── main.py            # FastAPI app
-│   ├── tests/
-│   └── requirements.txt
-│
-├── ai-agents/                  # Multi-agent orchestration
-│   ├── agents/                # Agent logic & prompts
-│   └── config/                # Agent configurations
-│
-├── .github/
-│   └── workflows/
-│       └── deploy.yml         # CI/CD pipeline
-│
-├── README.md                   # This file
-└── LICENSE                     # MIT License
-```
-
----
-
 ## 🗺️ **Development Roadmap**
 
 ### **✅ Phase 1: Foundation** (COMPLETED)
