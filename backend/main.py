@@ -14,15 +14,10 @@ app = FastAPI(
 )
 
 
-# Get allowed origins from environment
-CLIENT_ORIGIN = os.getenv("CLIENT_ORIGIN", "*")
-allowed_origins = [CLIENT_ORIGIN] if CLIENT_ORIGIN != "*" else ["*"]
-
-
-# CORS
+# CORS - Allow all origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=["*"],  # ✅ Allow all origins (you can restrict this later)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -46,8 +41,7 @@ def read_root():
         "message": "🚀 AI Support Pro API is running!",
         "status": "operational",
         "version": "1.0.0",
-        "docs": "/docs",
-        "allowed_origins": allowed_origins
+        "docs": "/docs"
     }
 
 
