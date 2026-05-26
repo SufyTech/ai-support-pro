@@ -14,7 +14,7 @@ const agents = [
       "Instantly identifies intent and sentiment of incoming messages to route them correctly.",
     icon: Shield,
     color: "#6c6cff",
-    stat: "99.2% accuracy",
+    stat: "High-accuracy intent detection", // was "99.2% accuracy"
   },
   {
     title: "Triage Agent",
@@ -22,15 +22,15 @@ const agents = [
       "Prioritizes tickets based on urgency and customer tiering to ensure SLA compliance.",
     icon: Target,
     color: "#22d3a0",
-    stat: "< 2s response",
+    stat: "Fast priority routing", // was "< 2s response"
   },
   {
     title: "Reply Agent",
     description:
-      "Drafts perfectly personalized responses based on previous interactions and company tone.",
+      "Drafts personalized responses based on previous interactions and company tone.",
     icon: MessageCircle,
     color: "#c1c1ff",
-    stat: "95% satisfaction",
+    stat: "Human-like AI replies", // was "95% satisfaction"
   },
   {
     title: "Knowledge Agent",
@@ -38,7 +38,7 @@ const agents = [
       "Syncs with your documentation to provide accurate, grounded information to customers.",
     icon: BookOpen,
     color: "#a78bfa",
-    stat: "10K+ docs indexed",
+    stat: "Docs-aware answers", // was "10K+ docs indexed"
   },
 ];
 
@@ -60,8 +60,8 @@ export default function Agents() {
           <br className="hidden md:block" /> specialized tasks.
         </h2>
         <p className="text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
-          Built on AutoGen framework, our AI agents collaborate autonomously to
-          handle every aspect of customer support.
+          Powered by a custom multi-agent orchestration layer, our AI agents
+          collaborate to handle every aspect of customer support.
         </p>
       </motion.div>
 
@@ -152,13 +152,12 @@ export default function Agents() {
         className="mt-16 text-center"
       >
         <p className="text-sm text-text-muted mb-4">
-          Powered by{" "}
-          <span className="text-accent font-semibold">Microsoft AutoGen</span> +{" "}
-          <span className="text-accent font-semibold">Groq LLM</span>
+          Powered by <span className="text-accent font-semibold">Groq LLM</span>{" "}
+          and a custom multi-agent architecture.
         </p>
         <div className="flex items-center justify-center gap-2 text-xs text-text-muted">
           <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-          <span>All agents running in real-time</span>
+          <span>All agents orchestrated in real-time during beta</span>
         </div>
       </motion.div>
     </section>

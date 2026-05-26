@@ -21,7 +21,7 @@ const solutions = [
       "Unify all support channels into a single, AI-managed stream that categorizes and assigns tickets automatically.",
     icon: Inbox,
     color: "#6c6cff",
-    stat: "10x faster",
+    stat: "AI-powered routing", // was "10x faster"
     features: ["Multi-channel sync", "Auto-categorization", "Smart routing"],
   },
   {
@@ -30,7 +30,7 @@ const solutions = [
       "Deploy our lightweight, context-aware support widget directly into your app for instant customer assistance.",
     icon: Layout,
     color: "#22d3a0",
-    stat: "< 50KB",
+    stat: "Lightweight widget", // was "< 50KB"
     features: ["Zero config", "Customizable UI", "Real-time chat"],
   },
   {
@@ -39,7 +39,7 @@ const solutions = [
       "Intelligent handoff from AI to human agents when complex issues arise, ensuring no customer is left behind.",
     icon: GitBranch,
     color: "#c1c1ff",
-    stat: "98% accuracy",
+    stat: "Smart escalation", // was "98% accuracy"
     features: ["Smart handoff", "Priority queuing", "Agent matching"],
   },
   {
@@ -48,7 +48,7 @@ const solutions = [
       "Deep insights into agent performance, customer satisfaction, and automated resolution rates.",
     icon: BarChart3,
     color: "#a78bfa",
-    stat: "Real-time",
+    stat: "Live insights", // was "Real-time" as a performance claim
     features: ["Live dashboards", "Custom reports", "Export data"],
   },
 ];
@@ -186,16 +186,13 @@ export default function Solutions() {
         className="mt-16 text-center"
       >
         <p className="text-sm text-text-muted mb-4">
-          Integrate with{" "}
-          <span className="text-accent font-semibold">Zendesk</span>,{" "}
-          <span className="text-accent font-semibold">Intercom</span>,{" "}
-          <span className="text-accent font-semibold">Freshdesk</span> and 50+
-          platforms
+          Designed to work alongside your existing support tools, with
+          integrations planned as we progress through beta.
         </p>
         <div className="flex items-center justify-center gap-2">
           <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
           <span className="text-xs text-text-muted">
-            All features available in production
+            Core features available in free beta
           </span>
         </div>
       </motion.div>
