@@ -116,6 +116,22 @@ export default function Hero({ tickets, loading }: HeroProps) {
         <span className="sm:hidden">No credit card · Free 14 days</span>
       </motion.div>
 
+      {/* Product Hunt badge */}
+      <div className="mb-6 sm:mb-8 flex justify-center">
+        <a
+          href="https://www.producthunt.com/products/ai-support-pro?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-ai-support-pro"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            alt="AI Support Pro - Multi-agent AI support desk · now in beta | Product Hunt"
+            width={250}
+            height={54}
+            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1156455&theme=light&t=1779811572116"
+          />
+        </a>
+      </div>
+
       {/* Hero Visual Mockup - Responsive */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -133,13 +149,21 @@ export default function Hero({ tickets, loading }: HeroProps) {
                 <div className="flex gap-1">
                   <button
                     onClick={() => setSortOrder("desc")}
-                    className={`text-[7px] md:text-[8px] font-bold px-1 md:px-1.5 py-0.5 rounded transition-colors ${sortOrder === "desc" ? "bg-accent text-white" : "bg-surface-alt text-text-muted hover:text-text-primary"}`}
+                    className={`text-[7px] md:text-[8px] font-bold px-1 md:px-1.5 py-0.5 rounded transition-colors ${
+                      sortOrder === "desc"
+                        ? "bg-accent text-white"
+                        : "bg-surface-alt text-text-muted hover:text-text-primary"
+                    }`}
                   >
                     NEW
                   </button>
                   <button
                     onClick={() => setSortOrder("asc")}
-                    className={`text-[7px] md:text-[8px] font-bold px-1 md:px-1.5 py-0.5 rounded transition-colors ${sortOrder === "asc" ? "bg-accent text-white" : "bg-surface-alt text-text-muted hover:text-text-primary"}`}
+                    className={`text-[7px] md:text-[8px] font-bold px-1 md:px-1.5 py-0.5 rounded transition-colors ${
+                      sortOrder === "asc"
+                        ? "bg-accent text-white"
+                        : "bg-surface-alt text-text-muted hover:text-text-primary"
+                    }`}
                   >
                     OLD
                   </button>
@@ -201,14 +225,20 @@ export default function Hero({ tickets, loading }: HeroProps) {
               <div className="flex items-center gap-2 sm:gap-2.5">
                 <span className="relative flex h-2 w-2">
                   <span
-                    className={`animate-ping absolute inline-flex h-full w-full rounded-full ${loading ? "bg-text-muted" : "bg-success"} opacity-75`}
+                    className={`animate-ping absolute inline-flex h-full w-full rounded-full ${
+                      loading ? "bg-text-muted" : "bg-success"
+                    } opacity-75`}
                   />
                   <span
-                    className={`relative inline-flex rounded-full h-2 w-2 ${loading ? "bg-text-muted" : "bg-success"}`}
+                    className={`relative inline-flex rounded-full h-2 w-2 ${
+                      loading ? "bg-text-muted" : "bg-success"
+                    }`}
                   />
                 </span>
                 <span
-                  className={`text-[8px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-widest ${loading ? "text-text-muted" : "text-success"}`}
+                  className={`text-[8px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-widest ${
+                    loading ? "text-text-muted" : "text-success"
+                  }`}
                 >
                   {loading ? "Connecting..." : "Agent Active"}
                 </span>
