@@ -162,30 +162,30 @@ async def create_ticket(ticket: TicketCreate):
     """Create a new support ticket with AI-powered categorization"""
     
     # Simple AI logic to categorize and prioritize
-    subject_lower = ticket.subject.lower()
-    description_lower = ticket.description.lower()
-    
-    # Determine category
-    if any(word in subject_lower + description_lower for word in ["login", "password", "access", "error", "bug"]):
-        category = "Technical"
-        priority = "high"
-        suggested_reply = "Our technical team is investigating this issue. We'll get back to you within 2 hours."
-    elif any(word in subject_lower + description_lower for word in ["billing", "charge", "payment", "refund", "invoice"]):
-        category = "Billing"
-        priority = "high"
-        suggested_reply = "Our billing team will review your account and respond within 24 hours."
-    elif any(word in subject_lower + description_lower for word in ["feature", "request", "suggest", "improvement"]):
-        category = "Feature Request"
-        priority = "low"
-        suggested_reply = "Thank you for your suggestion! We've added it to our product roadmap."
-    else:
-        category = "General"
-        priority = "medium"
-        suggested_reply = "Thank you for contacting us. Our support team will review your inquiry shortly."
-    
+    # Default fallbacks
+    category = "General"
+    priority = "medium"
+    suggested_reply = "Thank you for contacting us. Our support team will review your inquiry shortly."
+    assigned_agent = "AI AutoGen Agent"
+    needs_escalation = False
+
+    try:
+        from ai_agents.dispatcher_autogen import dispatch
+        ai_response = dispatch(
+            subject=ticket.subject,
+            description=ticket.description
+        )
+        category = ai_response.get("category", category)
+        priority = ai_response.get("priority", priority)
+        suggested_reply = ai_response.get("suggestedReply", suggested_reply)
+        assigned_agent = ai_response.get("assigned_agent", assigned_agent)
+        needs_escalation = ai_response.get("needs_escalation", False)
+    except Exception as e:
+        print(f"AI dispatch failed, using fallback: {e}")
+
     # Generate ticket ID
     ticket_id = f"TICK-{datetime.now().strftime('%Y%m%d%H%M%S')}"
-    
+
     return {
         "id": ticket_id,
         "subject": ticket.subject,
@@ -195,7 +195,8 @@ async def create_ticket(ticket: TicketCreate):
         "status": "open",
         "suggestedReply": suggested_reply,
         "createdAt": datetime.now().isoformat() + "Z",
-        "assigned_agent": "AI Triage Agent"
+        "assigned_agent": assigned_agent,
+        "needs_escalation": needs_escalation
     }
 
 
