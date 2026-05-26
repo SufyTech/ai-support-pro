@@ -111,7 +111,7 @@ export default function Hero({ tickets, loading }: HeroProps) {
         className="text-[10px] sm:text-xs text-text-muted mb-16 sm:mb-24 font-medium uppercase tracking-[0.2em] px-4 text-center"
       >
         <span className="hidden sm:inline">
-          No credit card required · SOC 2 Type II · Free for 14 days
+          No credit card required · Free Beta · Open Source
         </span>
         <span className="sm:hidden">No credit card · Free 14 days</span>
       </motion.div>

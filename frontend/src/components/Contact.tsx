@@ -26,16 +26,16 @@ export default function Contact() {
   };
 
   const stats = [
-    { icon: Building2, value: "500+", label: "Enterprise Clients" },
-    { icon: Users, value: "10M+", label: "Tickets Resolved" },
-    { icon: TrendingUp, value: "92%", label: "Cost Reduction" },
+    { icon: Building2, value: "Beta", label: "Now Live" },
+    { icon: Users, value: "4+", label: "AI Agents" },
+    { icon: TrendingUp, value: "92%", label: "Auto-Resolved" },
   ];
 
   const benefits = [
-    "White-glove onboarding with dedicated success manager",
-    "Custom AI agent training on your historical tickets",
-    "SOC 2 Type II compliance and enterprise SLA",
-    "Priority support with <15min response time",
+    "4 AI agents working together — Triage, Knowledge, Response, Escalation",
+    "Auto-classifies and prioritizes every ticket instantly",
+    "Real AI-generated replies using Groq LLM",
+    "Open source — inspect every line of code",
   ];
 
   return (
@@ -67,8 +67,8 @@ export default function Contact() {
             </h2>
 
             <p className="text-lg text-text-muted mb-8">
-              Join 500+ companies using AI Support Pro to resolve tickets 10x
-              faster and save thousands in operational costs.
+              Try AI Support Pro and see how multi-agent AI can resolve tickets
+              faster and reduce your support workload automatically.
             </p>
 
             {/* Stats Grid */}
@@ -182,15 +182,15 @@ export default function Contact() {
                 <div className="flex items-center justify-center gap-4 text-xs text-text-muted">
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3 text-accent" />
-                    SOC 2 Type II
+                    Free Beta
                   </span>
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3 text-accent" />
-                    GDPR Ready
+                    Open Source
                   </span>
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3 text-accent" />
-                    99.9% SLA
+                    Real AI
                   </span>
                 </div>
               </div>

@@ -10,20 +10,23 @@ import {
 
 export default function Security() {
   const securityFeatures = [
-    "SOC 2 Type II Compliant infrastructure",
-    "End-to-end data encryption in transit and at rest",
-    "ISO 27001 Certified data centers (AWS/GCP)",
-    "HIPAA & GDPR ready data residency options",
+    "Data encrypted in transit and at rest",
+    "Secure API communication via HTTPS",
+    "No data stored permanently — stateless processing",
+    "GDPR-conscious design — minimal data collection",
   ];
 
   const certifications = [
-    { icon: Shield, label: "SOC 2", color: "#6c6cff" },
-    { icon: Lock, label: "ISO 27001", color: "#22d3a0" },
-    { icon: FileCheck, label: "GDPR", color: "#c1c1ff" },
+    { icon: Shield, label: "Secure API", color: "#6c6cff" },
+    { icon: Lock, label: "Encrypted", color: "#22d3a0" },
+    { icon: FileCheck, label: "Beta", color: "#c1c1ff" },
   ];
 
   return (
-    <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto" id="security">
+    <section
+      className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto"
+      id="security"
+    >
       <motion.div
         initial="hidden"
         whileInView="visible"
@@ -62,7 +65,10 @@ export default function Security() {
           </p>
 
           {/* Security Features List */}
-          <motion.ul variants={staggerContainer} className="space-y-4 sm:space-y-5 mb-8 sm:mb-12">
+          <motion.ul
+            variants={staggerContainer}
+            className="space-y-4 sm:space-y-5 mb-8 sm:mb-12"
+          >
             {securityFeatures.map((feature, i) => (
               <motion.li
                 key={i}
@@ -137,7 +143,9 @@ export default function Security() {
                 <p className="text-xs sm:text-sm font-bold text-text-primary mb-1">
                   Protected By
                 </p>
-                <p className="text-[10px] sm:text-xs text-text-muted">Zero-Trust Vault</p>
+                <p className="text-[10px] sm:text-xs text-text-muted">
+                  Zero-Trust Vault
+                </p>
               </div>
 
               {/* Encryption Badge */}
