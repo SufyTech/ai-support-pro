@@ -185,7 +185,7 @@ One URL for recruiters to share. Everything — product demo, agent monitoring, 
 
 ## About
 
-**Sufiyan Khan** — AI Engineer, Pune  
+**Sufiyan Khan** — AI Engineer, Satara
 Building production-grade AI systems. Open to remote roles.
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sufiyan-khan-a86521301)
