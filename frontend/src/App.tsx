@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import Navbar from "./components/Navbar.tsx";
 import Hero from "./components/Hero.tsx";
 import SocialProof from "./components/SocialProof.tsx";
@@ -15,21 +17,18 @@ import Security from "./components/Security.tsx";
 import Contact from "./components/Contact.tsx";
 import Footer from "./components/Footer.tsx";
 import TicketList from "./components/TicketList.tsx";
-import AIDispatcher from "./components/AIDispatcher.tsx"; 
+import AIDispatcher from "./components/AIDispatcher.tsx";
 import KnowledgeSearch from "./components/KnowledgeSearch.tsx";
-
+import ObservabilityDashboard from "./components/ObservabilityDashboard.tsx";
 
 import { useTickets } from "./hooks/useTickets.ts";
 import { useTicketStats } from "./hooks/useTicketStats.ts";
-import { Ticket } from "./types.ts"; // ✅ ADDED
+import { Ticket } from "./types.ts";
 
 export default function App() {
-  const {
-    tickets,
-    loading: ticketsLoading,
-    refresh: refreshTickets,
-    setTickets, // ✅ ADDED - This is the KEY fix
-  } = useTickets();
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+
+  const { tickets, loading: ticketsLoading, setTickets } = useTickets();
 
   const {
     stats,
@@ -37,12 +36,8 @@ export default function App() {
     refresh: refreshStats,
   } = useTicketStats();
 
-  // ✅ UPDATED - Now accepts the new ticket and adds it immediately
   const handleTicketCreated = (newTicket: Ticket) => {
-    // Add new ticket to the TOP of the list immediately
     setTickets((prevTickets) => [newTicket, ...prevTickets]);
-
-    // Refresh stats
     refreshStats();
   };
 
@@ -59,7 +54,27 @@ export default function App() {
         }}
       />
 
-      <Navbar />
+      <Navbar
+        onDashboardToggle={() => setIsDashboardOpen((prev) => !prev)}
+        isDashboardOpen={isDashboardOpen}
+      />
+
+      {/* Observability Dashboard Overlay */}
+      <AnimatePresence>
+        {isDashboardOpen && (
+          <motion.div
+            key="dashboard-overlay"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed inset-0 z-40 pt-16 overflow-y-auto"
+            style={{ background: "#060612" }}
+          >
+            <ObservabilityDashboard />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <main>
         <Hero tickets={tickets} loading={ticketsLoading} />
@@ -68,11 +83,8 @@ export default function App() {
         <Agents />
         <HowItWorks />
         <Metrics stats={stats} loading={statsLoading} />
-
-        {/* ✅ ADDED - New AI Dispatcher component */}
         <AIDispatcher onTicketCreated={handleTicketCreated} />
         <KnowledgeSearch />
-
         <TicketList tickets={tickets} loading={ticketsLoading} />
         <Pricing />
         <Security />

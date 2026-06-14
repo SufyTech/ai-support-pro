@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Menu, X, Github } from "lucide-react";
+import { Menu, X, Github, LayoutDashboard } from "lucide-react";
 
-export default function Navbar() {
+interface NavbarProps {
+  onDashboardToggle?: () => void;
+  isDashboardOpen?: boolean;
+}
+
+export default function Navbar({
+  onDashboardToggle,
+  isDashboardOpen,
+}: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -14,7 +22,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu when scrolling
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -30,7 +37,7 @@ export default function Navbar() {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
-      setIsMobileMenuOpen(false); // Close menu after clicking
+      setIsMobileMenuOpen(false);
     }
   };
 
@@ -104,7 +111,21 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Right Side */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
+          {/* Dashboard Toggle */}
+          <button
+            onClick={onDashboardToggle}
+            aria-label="Toggle observability dashboard"
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border transition-all duration-200 ${
+              isDashboardOpen
+                ? "bg-accent text-white border-accent shadow-[0_0_20px_rgba(108,108,255,0.3)]"
+                : "bg-accent/10 text-accent border-accent/30 hover:bg-accent/20 hover:border-accent/50"
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            Dashboard
+          </button>
+
           <a
             href="https://github.com/SufyTech"
             target="_blank"
@@ -184,6 +205,25 @@ export default function Navbar() {
 
                 {/* Divider */}
                 <div className="border-t border-border-soft" />
+
+                {/* Dashboard Button Mobile */}
+                <motion.button
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.28 }}
+                  onClick={() => {
+                    onDashboardToggle?.();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all border ${
+                    isDashboardOpen
+                      ? "bg-accent text-white border-accent"
+                      : "bg-accent/10 text-accent border-accent/30 hover:bg-accent/20"
+                  }`}
+                >
+                  <LayoutDashboard className="w-5 h-5" />
+                  {isDashboardOpen ? "Close Dashboard" : "Open Dashboard"}
+                </motion.button>
 
                 {/* GitHub Link */}
                 <motion.a
