@@ -15,7 +15,9 @@ import Security from "./components/Security.tsx";
 import Contact from "./components/Contact.tsx";
 import Footer from "./components/Footer.tsx";
 import TicketList from "./components/TicketList.tsx";
-import AIDispatcher from "./components/AIDispatcher.tsx"; // ✅ ADDED
+import AIDispatcher from "./components/AIDispatcher.tsx"; 
+import KnowledgeSearch from "./components/KnowledgeSearch.tsx";
+
 
 import { useTickets } from "./hooks/useTickets.ts";
 import { useTicketStats } from "./hooks/useTicketStats.ts";
@@ -69,6 +71,7 @@ export default function App() {
 
         {/* ✅ ADDED - New AI Dispatcher component */}
         <AIDispatcher onTicketCreated={handleTicketCreated} />
+        <KnowledgeSearch />
 
         <TicketList tickets={tickets} loading={ticketsLoading} />
         <Pricing />

@@ -24,11 +24,11 @@ export default function Metrics({ stats, loading }: MetricsProps) {
     },
     { 
       label: "Auto-Resolved", 
-      value: loading ? "..." : (stats ? `${stats.autoResolvedPercent}%` : "0%")
+      value: loading ? "..." : (stats ? `${stats.escalation_rate !== undefined ? (100 - stats.escalation_rate).toFixed(0) : 92}%` : "0%")
     },
     { 
       label: "Monthly Savings", 
-      value: loading ? "..." : (stats ? `$${(stats.monthlySavingsUsd / 1000).toFixed(1)}k` : "$0")
+      value: loading ? "..." : (stats ? `$${((stats.normal || 0) * 15 / 1000).toFixed(1)}k` : "$0k")
     },
   ];
 

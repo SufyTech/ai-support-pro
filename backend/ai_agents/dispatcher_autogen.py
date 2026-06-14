@@ -17,7 +17,7 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 # ─────────────────────────────────────────
 def triage_agent(subject: str, description: str) -> dict:
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="llama3-8b-8192",
         messages=[
             {
                 "role": "system",
@@ -55,7 +55,7 @@ def triage_agent(subject: str, description: str) -> dict:
 # ─────────────────────────────────────────
 def knowledge_agent(subject: str, description: str, category: str) -> str:
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="llama3-8b-8192",
         messages=[
             {
                 "role": "system",
@@ -81,7 +81,7 @@ def knowledge_agent(subject: str, description: str, category: str) -> str:
 # ─────────────────────────────────────────
 def response_agent(subject: str, description: str, category: str, priority: str, solution_approach: str) -> str:
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="llama3-8b-8192",
         messages=[
             {
                 "role": "system",

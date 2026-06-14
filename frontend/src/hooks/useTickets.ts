@@ -43,7 +43,7 @@ export function useTickets() {
       const newTickets = typeof updater === 'function' ? updater(prevTickets) : updater;
       
       // Extract only user-created tickets (ones created via API, not from backend)
-      const userTickets = newTickets.filter(t => !['TICK-001', 'TICK-002', 'TICK-003'].includes(t.id));
+      const userTickets = newTickets.filter(t => !t.id.match(/^TICK-00\d$/));
       
       // Save to localStorage
       localStorage.setItem(STORAGE_KEY, JSON.stringify(userTickets));
