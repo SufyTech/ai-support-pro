@@ -71,7 +71,7 @@ export default function App() {
             className="fixed inset-0 z-40 pt-16 overflow-y-auto"
             style={{ background: "#060612" }}
           >
-            <ObservabilityDashboard />
+            <ObservabilityDashboard onClose={() => setIsDashboardOpen(false)} />
           </motion.div>
         )}
       </AnimatePresence>

@@ -85,7 +85,13 @@ interface Ticket {
   agents_run: string[];
 }
 
-export default function ObservabilityDashboard() {
+interface ObservabilityDashboardProps {
+  onClose?: () => void;
+}
+
+export default function ObservabilityDashboard({
+  onClose,
+}: ObservabilityDashboardProps) {
   const [stats, setStats] = useState<Stats | null>(null);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
@@ -331,6 +337,22 @@ export default function ObservabilityDashboard() {
             />
             LIVE
           </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              color: "#94a3b8",
+              borderRadius: 9,
+              padding: "6px 16px",
+              cursor: "pointer",
+              fontSize: 13,
+              fontWeight: 600,
+              fontFamily: "inherit",
+            }}
+          >
+            ← Back
+          </button>
           <button
             onClick={fetchData}
             style={{
