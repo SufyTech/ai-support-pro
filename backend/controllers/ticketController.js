@@ -18,7 +18,7 @@ function runPythonClassifier(subject, description) {
       "ai-agents",
       "classifier.py",
     );
-    const py = spawn("py", [scriptPath], {
+    const py = spawn(process.env.PYTHON_CMD || "python3", [scriptPath], {
       cwd: path.join(__dirname, "..", ".."),
       env: { ...process.env },
     });
