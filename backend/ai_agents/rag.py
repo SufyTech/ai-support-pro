@@ -4,7 +4,7 @@ import uuid
 from groq import Groq
 from qdrant_client import QdrantClient
 from qdrant_client.models import VectorParams, Distance, PointStruct
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 from dotenv import load_dotenv
 
 # ── Config ────────────────────────────────────────────────────────────────────
@@ -17,7 +17,7 @@ QDRANT_URL = os.getenv("QDRANT_URL", "")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 
 # ── Embedding model (runs locally, small enough to deploy) ─────────────────────
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
+embedder = TextEmbedding("sentence-transformers/all-MiniLM-L6-v2")
 
 # ── Qdrant Cloud client ──────────────────────────────────────────────────────
 qdrant = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
@@ -64,14 +64,14 @@ def ingest_documents():
             content = f.read()
 
         chunks = chunk_text(content)
-        vectors = embedder.encode(chunks).tolist()
+        vectors = list(embedder.embed(chunks))
 
-        for i, (chunk, vector) in enumerate(zip(chunks, vectors)):
-            points.append(PointStruct(
-                id=str(uuid.uuid4()),
-                vector=vector,
-                payload={"text": chunk, "source": filename, "chunk_index": i}
-            ))
+    for i, (chunk, vector) in enumerate(zip(chunks, vectors)):
+        points.append(PointStruct(
+        id=str(uuid.uuid4()),
+        vector=vector.tolist(),
+        payload={"text": chunk, "source": filename, "chunk_index": i}
+    ))
 
     qdrant.upsert(collection_name=COLLECTION_NAME, points=points)
     print(f"[RAG] Ingested {len(points)} chunks from {len(md_files)} files.")
@@ -85,7 +85,7 @@ def retrieve(query: str, n_results: int = 3) -> list[dict]:
     if qdrant.count(collection_name=COLLECTION_NAME).count == 0:
         ingest_documents()
 
-    query_vector = embedder.encode(query).tolist()
+    query_vector = list(embedder.embed([query]))[0].tolist()
     results = qdrant.query_points(
         collection_name=COLLECTION_NAME,
         query=query_vector,
