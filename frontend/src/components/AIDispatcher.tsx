@@ -1,53 +1,53 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { Sparkles, Send, CheckCircle2, AlertCircle } from "lucide-react";
-import { createTicket } from "../api/client";
-import { Ticket } from "../types";
+import { createReview } from "../api/client";
+import { Review } from "../types";
 import { fadeInUp, viewportConfig } from "../lib/motionPresets";
 
 interface AIDispatcherProps {
-  onTicketCreated?: (ticket: Ticket) => void;
+  onReviewCreated?: (review: Review) => void;
 }
 
-export default function AIDispatcher({ onTicketCreated }: AIDispatcherProps) {
-  const [subject, setSubject] = useState("");
-  const [description, setDescription] = useState("");
+export default function AIDispatcher({ onReviewCreated }: AIDispatcherProps) {
+  const [prTitle, setPrTitle] = useState("");
+  const [codeDiff, setCodeDiff] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<Ticket | null>(null);
+  const [result, setResult] = useState<Review | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const quickScenarios = [
     {
-      icon: "💳",
-      label: "Billing",
-      subject: "Billing inquiry",
-      description: "I was charged twice for my subscription",
+      icon: "🐛",
+      label: "Bug Fix",
+      prTitle: "Fix retry logic in API client",
+      codeDiff:
+        "+ for attempt in range(3):\n+     try:\n+         return requests.get(url)\n+     except: continue",
     },
     {
-      icon: "🔒",
-      label: "Login",
-      subject: "Cannot log in to my account",
-      description: "Getting error 'Invalid credentials' when trying to login",
+      icon: "🔐",
+      label: "Auth Change",
+      prTitle: "Update password hashing logic",
+      codeDiff: "- password = hash(password)\n+ password = md5(password)",
     },
     {
-      icon: "🚨",
-      label: "API",
-      subject: "API returning 500 errors",
-      description:
-        "Our production API has been returning 500 errors for the past hour",
+      icon: "📦",
+      label: "Dependency",
+      prTitle: "Bump lodash to 4.17.21",
+      codeDiff: '- "lodash": "4.17.15"\n+ "lodash": "4.17.21"',
     },
   ];
 
   const handleQuickTest = (scenario: (typeof quickScenarios)[0]) => {
-    setSubject(scenario.subject);
-    setDescription(scenario.description);
+    setPrTitle(scenario.prTitle);
+    setCodeDiff(scenario.codeDiff);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!subject.trim() || !description.trim()) {
-      setError("Please fill in both subject and description");
+    if (!prTitle.trim() || !codeDiff.trim()) {
+      setError("Please fill in both PR title and code diff");
       return;
     }
 
@@ -56,34 +56,31 @@ export default function AIDispatcher({ onTicketCreated }: AIDispatcherProps) {
     setResult(null);
 
     try {
-      const newTicket = await createTicket({
-        subject: subject.trim(),
-        description: description.trim(),
+      const newReview = await createReview({
+        pr_title: prTitle.trim(),
+        code_diff: codeDiff.trim(),
       });
 
-      setResult(newTicket);
+      setResult(newReview);
 
-      // Call parent callback to refresh ticket list
-      if (onTicketCreated) {
-        onTicketCreated(newTicket);
+      if (onReviewCreated) {
+        onReviewCreated(newReview);
       }
 
-      // ✅ NEW: Scroll to ticket list section
       setTimeout(() => {
-        const ticketSection = document.getElementById("ticket-list");
-        if (ticketSection) {
-          ticketSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        const reviewSection = document.getElementById("review-list");
+        if (reviewSection) {
+          reviewSection.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }, 500);
 
-      // Clear form after success
       setTimeout(() => {
-        setSubject("");
-        setDescription("");
+        setPrTitle("");
+        setCodeDiff("");
         setResult(null);
-      }, 5000); // ✅ Changed from 3000 to 5000 (more time to see result)
+      }, 5000);
     } catch (err: any) {
-      setError(err.message || "Failed to create ticket. Please try again.");
+      setError(err.message || "Failed to create review. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -104,15 +101,16 @@ export default function AIDispatcher({ onTicketCreated }: AIDispatcherProps) {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full mb-6">
             <Sparkles className="w-4 h-4 text-accent" />
             <span className="text-xs font-bold text-accent uppercase tracking-wider">
-              AI Support Dispatcher
+              AI Code Review Dispatcher
             </span>
           </div>
           <h2 className="text-3xl md:text-4xl font-display font-black mb-4">
             Test our AI agents in real-time
           </h2>
           <p className="text-text-muted max-w-2xl mx-auto">
-            Submit a support ticket and watch our AI agents automatically
-            categorize, prioritize, and generate a response in milliseconds.
+            Submit a PR title and code diff, and watch our AI agents
+            automatically triage risk, review the change, and generate a verdict
+            in milliseconds.
           </p>
         </motion.div>
 
@@ -152,48 +150,48 @@ export default function AIDispatcher({ onTicketCreated }: AIDispatcherProps) {
           className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-8 shadow-xl"
         >
           <div className="space-y-6">
-            {/* Subject Input */}
+            {/* PR Title Input */}
             <div>
               <label
-                htmlFor="subject"
+                htmlFor="prTitle"
                 className="block text-sm font-bold text-text-primary mb-2"
               >
-                Subject
+                PR Title
               </label>
               <input
                 type="text"
-                id="subject"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                placeholder="e.g., Cannot login to my account"
+                id="prTitle"
+                value={prTitle}
+                onChange={(e) => setPrTitle(e.target.value)}
+                placeholder="e.g., Add retry logic to API client"
                 disabled={loading}
                 className="w-full px-4 py-3 bg-surface/40 border border-border-soft rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
-            {/* Description Input */}
+            {/* Code Diff Input */}
             <div>
               <label
-                htmlFor="description"
+                htmlFor="codeDiff"
                 className="block text-sm font-bold text-text-primary mb-2"
               >
-                Description
+                Code Diff
               </label>
               <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe your issue in detail..."
-                rows={4}
+                id="codeDiff"
+                value={codeDiff}
+                onChange={(e) => setCodeDiff(e.target.value)}
+                placeholder="Paste your diff here, e.g.:&#10;- old code&#10;+ new code"
+                rows={6}
                 disabled={loading}
-                className="w-full px-4 py-3 bg-surface/40 border border-border-soft rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/20 transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-surface/40 border border-border-soft rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/20 transition-all resize-none font-mono text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading || !subject.trim() || !description.trim()}
+              disabled={loading || !prTitle.trim() || !codeDiff.trim()}
               className="w-full px-6 py-4 bg-accent hover:bg-accent/90 text-white font-bold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-[0_10px_40px_rgba(108,108,255,0.3)]"
             >
               {loading ? (
@@ -207,12 +205,12 @@ export default function AIDispatcher({ onTicketCreated }: AIDispatcherProps) {
                     }}
                     className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
                   />
-                  Processing...
+                  Reviewing...
                 </>
               ) : (
                 <>
                   <Send className="w-5 h-5" />
-                  Run AI Dispatcher
+                  Run AI Review
                 </>
               )}
             </button>
@@ -246,7 +244,6 @@ export default function AIDispatcher({ onTicketCreated }: AIDispatcherProps) {
               exit={{ opacity: 0, scale: 0.95 }}
               className="mt-8 bg-gradient-card backdrop-blur-sm border border-accent/30 rounded-2xl p-8 shadow-xl relative overflow-hidden"
             >
-              {/* Success shimmer effect */}
               <motion.div
                 animate={{ x: ["-100%", "100%"] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
@@ -260,7 +257,7 @@ export default function AIDispatcher({ onTicketCreated }: AIDispatcherProps) {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-text-primary">
-                      AI Analysis Complete
+                      AI Review Complete
                     </h3>
                     <p className="text-sm text-text-muted">
                       Processed in milliseconds
@@ -271,26 +268,26 @@ export default function AIDispatcher({ onTicketCreated }: AIDispatcherProps) {
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   <div className="bg-surface/40 rounded-lg p-4">
                     <p className="text-xs text-text-muted mb-1 uppercase tracking-wider font-bold">
-                      Subject
+                      PR Title
                     </p>
                     <p className="text-sm text-text-primary font-medium">
-                      {result.subject}
+                      {(result as any).pr_title}
                     </p>
                   </div>
                   <div className="bg-surface/40 rounded-lg p-4">
                     <p className="text-xs text-text-muted mb-1 uppercase tracking-wider font-bold">
-                      Category
+                      Change Type
                     </p>
                     <p className="text-sm text-accent font-bold">
-                      {result.category}
+                      {(result as any).change_type}
                     </p>
                   </div>
                   <div className="bg-surface/40 rounded-lg p-4">
                     <p className="text-xs text-text-muted mb-1 uppercase tracking-wider font-bold">
-                      🚨 Priority
+                      🚨 Risk Level
                     </p>
                     <p className="text-sm text-text-primary font-bold capitalize">
-                      {result.priority}
+                      {(result as any).risk_level}
                     </p>
                   </div>
                   <div className="bg-surface/40 rounded-lg p-4">
@@ -303,16 +300,16 @@ export default function AIDispatcher({ onTicketCreated }: AIDispatcherProps) {
                   </div>
                 </div>
 
-                {(result as any).suggestedReply && (
+                {(result as any).reviewComment && (
                   <div className="bg-accent/10 border border-accent/20 rounded-lg p-6">
                     <div className="flex items-center gap-2 mb-3">
                       <Sparkles className="w-4 h-4 text-accent" />
                       <p className="text-xs font-bold text-accent uppercase tracking-wider">
-                        AI-Generated Reply
+                        AI Review Comment
                       </p>
                     </div>
                     <p className="text-sm text-text-primary leading-relaxed">
-                      {(result as any).suggestedReply}
+                      {(result as any).reviewComment}
                     </p>
                   </div>
                 )}

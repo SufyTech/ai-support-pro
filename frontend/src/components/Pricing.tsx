@@ -1,10 +1,10 @@
 import { CheckCircle2 } from "lucide-react";
 import { motion } from "motion/react";
-import { 
-  fadeInUp, 
-  staggerContainer, 
-  hoverLift, 
-  viewportConfig
+import {
+  fadeInUp,
+  staggerContainer,
+  hoverLift,
+  viewportConfig,
 } from "../lib/motionPresets.ts";
 import { useState } from "react";
 
@@ -14,8 +14,8 @@ const plans = [
     description: "Perfect for small teams",
     price: "$99",
     features: [
-      "Up to 1,000 tickets/month",
-      "2 AI agents (Triage + Reply)",
+      "Up to 1,000 PR reviews/month",
+      "All 4 AI agents (Triage, Escalation, Knowledge, Response)",
       "Basic integrations",
       "Email support",
       "7-day free trial",
@@ -25,11 +25,11 @@ const plans = [
   },
   {
     name: "Professional",
-    description: "For growing support teams",
+    description: "For growing engineering teams",
     price: "$299",
     features: [
-      "Up to 10,000 tickets/month",
-      "5 specialist AI agents",
+      "Up to 10,000 PR reviews/month",
+      "All 4 AI agents + priority review queue",
       "All integrations + API access",
       "Advanced analytics",
       "Priority support",
@@ -43,11 +43,11 @@ const plans = [
     description: "Custom scale & compliance",
     price: "Custom",
     features: [
-      "Unlimited tickets",
+      "Unlimited PR reviews",
       "Custom agent training",
       "Dedicated infrastructure",
-      "HIPAA + GDPR compliance",
-      "99.99% SLA guarantee",
+      "GDPR-conscious data handling",
+      "Priority SLA options",
       "Dedicated success manager",
     ],
     cta: "Contact Sales",
@@ -59,10 +59,10 @@ export default function Pricing() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  const handleCTAClick = (plan: typeof plans[0]) => {
+  const handleCTAClick = (plan: (typeof plans)[0]) => {
     setSelectedPlan(plan.name);
     setShowModal(true);
-    
+
     // Auto-close modal after 3 seconds
     setTimeout(() => {
       setShowModal(false);
@@ -72,23 +72,25 @@ export default function Pricing() {
   return (
     <>
       <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto" id="pricing">
-        <motion.div 
+        <motion.div
           variants={fadeInUp}
           initial="hidden"
           whileInView="visible"
           viewport={viewportConfig}
           className="mb-24 text-center"
         >
-          <span className="text-xs uppercase tracking-[0.3em] text-accent font-bold block mb-4">Pricing Plans</span>
+          <span className="text-xs uppercase tracking-[0.3em] text-accent font-bold block mb-4">
+            Pricing Plans
+          </span>
           <h2 className="font-display text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-            Scale your support, not your costs.
+            Scale your reviews, not your costs.
           </h2>
           <p className="text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
-            Predictable pricing for high-performance support teams.
+            Predictable pricing for high-performance engineering teams.
           </p>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
@@ -107,13 +109,17 @@ export default function Pricing() {
               }`}
             >
               {plan.popular && (
-                <motion.div 
+                <motion.div
                   animate={{ opacity: [1, 0.5, 1] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute inset-0 bg-accent/5 pointer-events-none" 
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  className="absolute inset-0 bg-accent/5 pointer-events-none"
                 />
               )}
-              
+
               {plan.popular && (
                 <div className="absolute top-0 right-0 p-4">
                   <span className="bg-accent text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full animate-pulse">
@@ -123,19 +129,32 @@ export default function Pricing() {
               )}
 
               <div className="mb-8 relative z-10">
-                <h3 className="font-display text-2xl font-bold mb-2 text-text-primary group-hover:text-accent transition-colors">{plan.name}</h3>
-                <p className="text-sm text-text-muted font-medium">{plan.description}</p>
+                <h3 className="font-display text-2xl font-bold mb-2 text-text-primary group-hover:text-accent transition-colors">
+                  {plan.name}
+                </h3>
+                <p className="text-sm text-text-muted font-medium">
+                  {plan.description}
+                </p>
               </div>
 
               <div className="mb-10 relative z-10">
-                <span className="text-5xl font-black text-text-primary tracking-tighter">{plan.price}</span>
-                {plan.price !== "Custom" && <span className="text-text-muted font-bold ml-2">/month</span>}
+                <span className="text-5xl font-black text-text-primary tracking-tighter">
+                  {plan.price}
+                </span>
+                {plan.price !== "Custom" && (
+                  <span className="text-text-muted font-bold ml-2">/month</span>
+                )}
               </div>
 
               <ul className="space-y-4 mb-12 relative z-10">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3 text-sm text-text-secondary font-medium">
-                    <CheckCircle2 className={`w-5 h-5 flex-shrink-0 ${plan.popular ? 'text-accent' : 'text-success'}`} />
+                  <li
+                    key={feature}
+                    className="flex items-center gap-3 text-sm text-text-secondary font-medium"
+                  >
+                    <CheckCircle2
+                      className={`w-5 h-5 flex-shrink-0 ${plan.popular ? "text-accent" : "text-success"}`}
+                    />
                     {feature}
                   </li>
                 ))}
@@ -192,13 +211,19 @@ export default function Pricing() {
 
             {/* Message */}
             <p className="text-center text-text-secondary mb-6">
-              You've selected the <span className="text-accent font-bold">{selectedPlan}</span> plan.
+              You've selected the{" "}
+              <span className="text-accent font-bold">{selectedPlan}</span>{" "}
+              plan.
             </p>
 
             {/* Info Box */}
             <div className="bg-surface/50 border border-border-soft rounded-xl p-4 mb-6">
               <p className="text-sm text-text-muted text-center leading-relaxed">
-                <span className="text-accent font-semibold">Portfolio Demo:</span> In production, this would redirect to a secure checkout powered by Stripe.
+                <span className="text-accent font-semibold">
+                  Portfolio Demo:
+                </span>{" "}
+                In production, this would redirect to a secure checkout powered
+                by Stripe.
               </p>
             </div>
 

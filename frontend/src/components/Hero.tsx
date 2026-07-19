@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Bolt, Play } from "lucide-react";
-import VideoModal from "./VideoModal.tsx";
-import { Ticket } from "../types.ts";
+import { Bolt } from "lucide-react";
+import { Review } from "../types.ts";
 
 interface HeroProps {
-  tickets: Ticket[];
+  reviews: Review[];
   loading: boolean;
+  onGetStarted: () => void;
 }
 
-export default function Hero({ tickets, loading }: HeroProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export default function Hero({ reviews, loading, onGetStarted }: HeroProps) {
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
 
   const scrollToId = (id: string) => {
@@ -20,7 +19,7 @@ export default function Hero({ tickets, loading }: HeroProps) {
     }
   };
 
-  const displayedTickets = [...tickets]
+  const displayedReviews = [...reviews]
     .sort((a, b) => {
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
@@ -30,15 +29,8 @@ export default function Hero({ tickets, loading }: HeroProps) {
 
   return (
     <header className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-12 pt-24 sm:pt-32 pb-16 sm:pb-24 overflow-hidden">
-      <VideoModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-      />
-
       <div className="absolute inset-0 z-[-1] gradient-hero"></div>
 
-      {/* Animated Background Blobs */}
       <div className="absolute top-0 inset-x-0 h-full w-full pointer-events-none z-[-1]">
         <div className="absolute top-1/4 left-1/4 w-48 sm:w-72 h-48 sm:h-72 bg-accent/20 rounded-full blur-[80px] sm:blur-[120px] animate-blob" />
         <div className="absolute top-1/3 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-primary/10 rounded-full blur-[80px] sm:blur-[120px] animate-blob animation-delay-2000" />
@@ -61,10 +53,10 @@ export default function Hero({ tickets, loading }: HeroProps) {
         transition={{ delay: 0.1 }}
         className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl max-w-5xl mx-auto mb-6 sm:mb-8 font-black leading-[1.1] tracking-tighter px-4"
       >
-        Support that thinks.
+        Reviews that think.
         <br />
         <span className="text-gradient drop-shadow-[0_0_30px_rgba(108,108,255,0.3)]">
-          Resolves. Remembers.
+          Catches risk. Ships faster.
         </span>
       </motion.h1>
 
@@ -74,8 +66,8 @@ export default function Hero({ tickets, loading }: HeroProps) {
         transition={{ delay: 0.2 }}
         className="text-base sm:text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4"
       >
-        AI Support Pro deploys a coordinated team of AI agents that triage,
-        draft, escalate, and close tickets — 24/7, at any scale.
+        AI Code Review Bot deploys a coordinated team of AI agents that triage,
+        review, flag risk, and approve pull requests — 24/7, at any scale.
       </motion.p>
 
       <motion.div
@@ -84,24 +76,24 @@ export default function Hero({ tickets, loading }: HeroProps) {
         transition={{ delay: 0.3 }}
         className="flex flex-col sm:flex-row gap-4 sm:gap-5 items-center justify-center mb-6 sm:mb-8 w-full px-4"
       >
-        <button
-          aria-label="Start your 14-day free trial"
-          onClick={() => scrollToId("pricing")}
-          className="w-full sm:w-auto bg-accent text-white  rounded-full px-8 sm:px-10 py-3  sm:py-4 font-semibold text-sm sm:text-base hover:brightness-110 shadow-[0_0_60px_rgba(108,108,255,0.25)] transition-all cursor-pointer"
+        <motion.button
+          aria-label="Get started"
+          onClick={onGetStarted}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          className="w-full sm:w-auto bg-accent text-white rounded-full px-8 sm:px-10 py-3 sm:py-4 font-semibold text-sm sm:text-base hover:brightness-110 shadow-[0_0_60px_rgba(108,108,255,0.25)] transition-all cursor-pointer"
         >
-          Start Free Trial
-        </button>
-        <button
-          aria-label="Open demo video modal"
-          onClick={() => setIsModalOpen(true)}
-          className="w-full sm:w-auto group relative flex items-center justify-center gap-3 bg-surface-alt border border-border-soft text-text-primary px-8 sm:px-10 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-base hover:bg-white/5 transition-all cursor-pointer overflow-hidden shadow-xl"
+          Get Started
+        </motion.button>
+        <motion.button
+          aria-label="See how it works"
+          onClick={() => scrollToId("how-it-works")}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          className="w-full sm:w-auto bg-surface-alt border border-border-soft text-text-primary px-8 sm:px-10 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-base hover:bg-white/5 transition-all cursor-pointer"
         >
-          <div className="absolute inset-0 bg-accent/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          <span className="relative z-10">Watch Demo</span>
-          <div className="relative z-10 w-5 sm:w-6 h-5 sm:h-6 rounded-full bg-accent/20 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all">
-            <Play className="w-2.5 sm:w-3 h-2.5 sm:h-3 fill-current ml-0.5" />
-          </div>
-        </button>
+          How It Works
+        </motion.button>
       </motion.div>
 
       <motion.div
@@ -116,22 +108,6 @@ export default function Hero({ tickets, loading }: HeroProps) {
         <span className="sm:hidden">No credit card · Free 14 days</span>
       </motion.div>
 
-      {/* Product Hunt badge */}
-      <div className="mb-6 sm:mb-8 flex justify-center">
-        <a
-          href="https://www.producthunt.com/products/ai-support-pro?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-ai-support-pro"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            alt="AI Support Pro - Multi-agent AI support desk · now in beta | Product Hunt"
-            width={250}
-            height={54}
-            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1156455&theme=light&t=1779811572116"
-          />
-        </a>
-      </div>
-
       {/* Hero Visual Mockup - Responsive */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -145,7 +121,7 @@ export default function Hero({ tickets, loading }: HeroProps) {
           <div className="hidden sm:flex w-48 md:w-72 border-r border-border p-3 md:p-5 bg-surface/30 flex-col gap-2 md:gap-3">
             <div className="flex items-center justify-between mb-2 md:mb-4">
               <div className="h-3 md:h-4 bg-surface-alt rounded w-1/3" />
-              {!loading && tickets.length > 0 && (
+              {!loading && reviews.length > 0 && (
                 <div className="flex gap-1">
                   <button
                     onClick={() => setSortOrder("desc")}
@@ -180,40 +156,40 @@ export default function Hero({ tickets, loading }: HeroProps) {
                       className="h-10 md:h-14 bg-surface/20 rounded-lg md:rounded-xl border border-border-soft/50 animate-pulse"
                     />
                   ))
-              ) : displayedTickets.length > 0 ? (
-                displayedTickets.map((ticket) => (
+              ) : displayedReviews.length > 0 ? (
+                displayedReviews.map((review) => (
                   <div
-                    key={ticket.id}
+                    key={review.id}
                     className="h-auto bg-surface/50 rounded-lg md:rounded-xl border border-border-soft p-2 md:p-3 text-[8px] md:text-[10px] text-left hover:border-accent/40 transition-colors"
                   >
                     <div className="flex justify-between mb-1">
                       <span className="text-accent uppercase font-bold text-[7px] md:text-[8px]">
-                        {ticket.category}
+                        {review.change_type}
                       </span>
                       <span className="text-text-muted text-[7px] md:text-[8px]">
-                        {new Date(ticket.createdAt).toLocaleTimeString([], {
+                        {new Date(review.createdAt).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
                       </span>
                     </div>
                     <div className="truncate text-text-primary mb-1 text-[8px] md:text-[9px]">
-                      {ticket.subject}
+                      {review.pr_title}
                     </div>
                     <div
                       className={`text-[7px] md:text-[8px] uppercase px-1 md:px-1.5 py-0.5 rounded inline-block font-bold ${
-                        ticket.status === "open"
+                        review.status === "new"
                           ? "bg-success/10 text-success"
                           : "bg-accent/10 text-accent"
                       }`}
                     >
-                      {ticket.status}
+                      {review.status}
                     </div>
                   </div>
                 ))
               ) : (
                 <div className="text-[9px] md:text-xs text-text-muted text-center py-6 md:py-10 italic">
-                  No tickets
+                  No reviews
                 </div>
               )}
             </div>
@@ -257,31 +233,31 @@ export default function Hero({ tickets, loading }: HeroProps) {
                   <div className="h-3 sm:h-4 bg-surface/30 rounded w-1/2 animate-pulse" />
                   <div className="h-20 sm:h-24 bg-surface/20 rounded-xl sm:rounded-2xl animate-pulse mt-6 sm:mt-8" />
                 </div>
-              ) : tickets.length > 0 ? (
+              ) : reviews.length > 0 ? (
                 <>
                   <div className="flex gap-2 text-[10px] sm:text-xs">
                     <span className="text-accent opacity-50">&gt;</span>
-                    <span>System: Resolving {tickets[0].id}...</span>
+                    <span>System: Reviewing {reviews[0].id}...</span>
                   </div>
                   <div className="flex gap-2 text-[10px] sm:text-xs">
                     <span className="text-accent">&gt;</span>
                     <span className="text-accent font-medium">
-                      Auto-Response generated [99.2% confidence]
+                      Auto-Review generated [99.2% confidence]
                     </span>
                   </div>
 
                   <div className="bg-surface-alt/70 backdrop-blur-md p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-border-soft text-text-primary mt-6 sm:mt-8 relative leading-relaxed overflow-y-auto max-h-[200px] sm:max-h-[300px] text-[11px] sm:text-sm">
                     <div className="text-[9px] sm:text-[11px] text-text-muted mb-3 sm:mb-4 font-bold uppercase">
-                      Replied to:{" "}
-                      {displayedTickets[0]?.subject || tickets[0].subject}
+                      Reviewing:{" "}
+                      {displayedReviews[0]?.pr_title || reviews[0].pr_title}
                     </div>
-                    "Our AI has automatically processed the resolution for this{" "}
-                    {displayedTickets[0]?.category || tickets[0].category}{" "}
-                    request.
-                    {(displayedTickets[0]?.priority || tickets[0].priority) ===
-                    "urgent"
-                      ? " Since this was marked urgent, we have escalated to our priority lane."
-                      : " The resolution has been sent to the requester."}
+                    "Our AI has automatically reviewed this{" "}
+                    {displayedReviews[0]?.change_type || reviews[0].change_type}{" "}
+                    change.
+                    {(displayedReviews[0]?.risk_level ||
+                      reviews[0].risk_level) === "critical"
+                      ? " Since this touches high-risk code, it has been escalated for human review."
+                      : " The review comment has been posted."}
                     "
                     <motion.span
                       animate={{ opacity: [1, 0] }}
@@ -294,7 +270,7 @@ export default function Hero({ tickets, loading }: HeroProps) {
                 <div className="flex flex-col items-center justify-center py-16 sm:py-24 gap-3 sm:gap-4 opacity-50">
                   <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-border-soft border-t-accent animate-spin" />
                   <p className="text-[10px] sm:text-xs">
-                    Waiting for incoming tickets...
+                    Waiting for incoming pull requests...
                   </p>
                 </div>
               )}

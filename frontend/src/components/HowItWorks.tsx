@@ -8,21 +8,21 @@ import {
 const steps = [
   {
     number: "01",
-    title: "Connect Your Stack",
+    title: "Connect Your Repo",
     description:
-      "Connect AI Support Pro alongside your existing support tools today, with native helpdesk integrations planned as we progress through beta.",
+      "Connect AI CodeReview Pro alongside your existing dev tools today, with deeper CI/CD integrations planned as we progress through beta.",
   },
   {
     number: "02",
     title: "Train Your Agents",
     description:
-      "Our AI scans your historical tickets and knowledge base to learn your business logic.",
+      "Our AI scans your style guide and security checklist to learn your team's actual standards.",
   },
   {
     number: "03",
     title: "Go Live",
     description:
-      "Agents begin triaging and drafting replies immediately, scaling with your volume.",
+      "Agents begin triaging PRs and drafting review comments immediately, scaling with your volume.",
   },
 ];
 
@@ -49,7 +49,7 @@ export default function HowItWorks() {
           </h2>
         </div>
         <p className="text-lg text-text-secondary max-w-sm mt-6 md:mt-0">
-          We designed AI Support Pro to work with your current tools, not
+          We designed AI Code Review Bot to work with your current tools, not
           replace them.
         </p>
       </motion.div>

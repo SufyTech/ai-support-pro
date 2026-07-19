@@ -1,5 +1,5 @@
 # graph.py
-# LangGraph-based multi-agent orchestration for AI Support Pro
+# LangGraph-based multi-agent orchestration for AI Code Review Bot
 
 import os
 import json
@@ -16,90 +16,90 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 # STATE DEFINITION
 # This is the shared memory that all agents
 # read from and write to.
-# Think of it as a ticket form that gets
+# Think of it as a PR review form that gets
 # filled in step by step.
 # ─────────────────────────────────────────
 
-class TicketState(TypedDict):
+class ReviewState(TypedDict):
     # Input from user
-    subject: str
-    description: str
-    
+    pr_title: str
+    code_diff: str
+
     # Filled by Triage Agent
-    category: str
-    priority: str
-    urgency_reason: str
-    
+    change_type: str
+    risk_level: str
+    risk_reason: str
+
     # Filled by Knowledge Agent
-    solution_approach: str
-    
+    review_focus: str
+
     # Filled by Response Agent
-    suggested_reply: str
-    
+    review_comment: str
+
     # Filled by Escalation Agent
-    needs_escalation: bool
+    needs_human_review: bool
     assigned_to: str
-    
+
     # Tracks which agents ran
-    # We will use this in observability later
     agents_run: list
 
 
 # ─────────────────────────────────────────
 # AGENT 1: TRIAGE AGENT
-# 
+#
 # What it does:
-# Reads the ticket subject and description
-# Decides the category and priority
-# 
+# Reads the PR title and code diff
+# Decides the change type and risk level
+#
 # Why it exists:
-# Before any other agent can help, we need
-# to know WHAT type of problem this is and
-# HOW urgent it is. This drives all other
+# Before any other agent can review, we need
+# to know WHAT kind of change this is and
+# HOW risky it is. This drives all other
 # decisions in the graph.
 # ─────────────────────────────────────────
 
-def triage_agent(state: TicketState) -> TicketState:
+def triage_agent(state: ReviewState) -> ReviewState:
     print(">> Triage Agent running...")
-    
+
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[
             {
                 "role": "system",
-                "content": """You are a customer support triage agent. 
-                Analyze the support ticket and return ONLY a JSON object with:
-                - category: one of [Technical, Billing, Login, Feature Request, General]
-                - priority: one of [low, medium, high, urgent]
-                - urgency_reason: one sentence explaining the priority
-                
+                "content": """You are a code review triage agent.
+                Analyze the pull request title and diff, and return ONLY a JSON object with:
+                - change_type: one of [Feature, Bug Fix, Refactor, Dependency Update, Documentation]
+                - risk_level: one of [low, medium, high, critical]
+                - risk_reason: one sentence explaining the risk level
+
+                Mark risk_level as "high" or "critical" if the diff touches authentication,
+                payments, database migrations, environment/secrets config, or access control.
+
                 Return ONLY valid JSON, no other text."""
             },
             {
                 "role": "user",
-                "content": f"Subject: {state['subject']}\nDescription: {state['description']}"
+                "content": f"PR Title: {state['pr_title']}\nDiff:\n{state['code_diff']}"
             }
         ],
         temperature=0.1,
         max_tokens=200
     )
-    
+
     try:
         result = json.loads(response.choices[0].message.content.strip())
     except:
         result = {
-            "category": "General",
-            "priority": "medium",
-            "urgency_reason": "Unable to classify automatically"
+            "change_type": "Refactor",
+            "risk_level": "medium",
+            "risk_reason": "Unable to classify automatically"
         }
-    
-    # Write results back to state
-    # and track that this agent ran
+
     return {
         **state,
-        "category": result.get("category", "General"),
-        "priority": result.get("priority", "medium"),
-        "urgency_reason": result.get("urgency_reason", ""),
+        "change_type": result.get("change_type", "Refactor"),
+        "risk_level": result.get("risk_level", "medium"),
+        "risk_reason": result.get("risk_reason", ""),
         "agents_run": state.get("agents_run", []) + ["triage_agent"]
     }
 
@@ -108,40 +108,38 @@ def triage_agent(state: TicketState) -> TicketState:
 # AGENT 2: ESCALATION CHECK
 #
 # What it does:
-# Looks at priority from Triage Agent
-# Decides if this needs a human or can
-# be handled by AI
+# Looks at risk_level from Triage Agent
+# Decides if this needs a human reviewer or
+# can get an automated first-pass review
 #
 # Why it exists:
 # This is the DECISION POINT in our graph.
-# This is what makes LangGraph powerful.
-# Based on this decision, the graph takes
-# a completely different path.
-# Urgent tickets → go to human
-# Normal tickets → go to Knowledge Agent
+# High-risk changes (auth, payments, migrations)
+# should never be rubber-stamped by AI alone —
+# they get flagged for a human instead.
 # ─────────────────────────────────────────
 
-def escalation_check(state: TicketState) -> TicketState:
+def escalation_check(state: ReviewState) -> ReviewState:
     print(">> Escalation Check running...")
-    
-    priority = state.get("priority", "medium")
-    description = state.get("description", "").lower()
-    
-    # Check for urgent priority or sensitive words
-    sensitive_words = [
-        "legal", "lawsuit", "fraud", 
-        "hack", "breach", "stolen", "lawyer"
+
+    risk_level = state.get("risk_level", "medium")
+    diff = state.get("code_diff", "").lower()
+
+    sensitive_patterns = [
+        "password", "secret", "api_key", "auth",
+        "payment", "stripe", "migration", "drop table",
+        "delete from", ".env"
     ]
-    
-    needs_escalation = (
-        priority == "urgent" or 
-        any(word in description for word in sensitive_words)
+
+    needs_human_review = (
+        risk_level in ("high", "critical") or
+        any(pattern in diff for pattern in sensitive_patterns)
     )
-    
+
     return {
         **state,
-        "needs_escalation": needs_escalation,
-        "assigned_to": "Human Agent" if needs_escalation else "AI Agent",
+        "needs_human_review": needs_human_review,
+        "assigned_to": "Human Reviewer" if needs_human_review else "AI Reviewer",
         "agents_run": state.get("agents_run", []) + ["escalation_check"]
     }
 
@@ -153,20 +151,12 @@ def escalation_check(state: TicketState) -> TicketState:
 # This is NOT an agent. This is a router.
 # It looks at the state and tells LangGraph
 # which node to go to next.
-#
-# Why it exists:
-# This is the core of LangGraph. Without this
-# routing function, we just have sequential
-# functions like before. With this, the graph
-# makes intelligent decisions about flow.
 # ─────────────────────────────────────────
 
-def route_after_escalation(state: TicketState) -> str:
-    if state.get("needs_escalation"):
-        # Skip AI response, go straight to end
+def route_after_escalation(state: ReviewState) -> str:
+    if state.get("needs_human_review"):
         return "escalated"
     else:
-        # Continue to knowledge agent
         return "continue"
 
 
@@ -174,40 +164,39 @@ def route_after_escalation(state: TicketState) -> str:
 # AGENT 3: KNOWLEDGE AGENT
 #
 # What it does:
-# Only runs for NON-urgent tickets
-# Finds the best solution approach
-# based on the category
+# Only runs for lower-risk changes
+# Determines what the review should focus on
+# based on the change type
 #
 # Why it exists:
-# Different categories need different
-# solution strategies. A billing issue
-# needs a different approach than a
-# technical bug.
+# A "Dependency Update" needs a different review
+# lens than a "Feature" or "Bug Fix" — this agent
+# sets that focus before the review is written.
 # ─────────────────────────────────────────
 
-def knowledge_agent(state: TicketState) -> TicketState:
+def knowledge_agent(state: ReviewState) -> ReviewState:
     print(">> Knowledge Agent running...")
-    
+
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[
             {
                 "role": "system",
-                "content": f"""You are a knowledge agent for {state['category']} issues.
-                Find the best solution approach in 1-2 sentences. No fluff."""
+                "content": f"""You are a code review knowledge agent for {state['change_type']} changes.
+                State the single most important thing this review should focus on, in 1-2 sentences. No fluff."""
             },
             {
                 "role": "user",
-                "content": f"Subject: {state['subject']}\nDescription: {state['description']}"
+                "content": f"PR Title: {state['pr_title']}\nDiff:\n{state['code_diff']}"
             }
         ],
         temperature=0.2,
         max_tokens=150
     )
-    
+
     return {
         **state,
-        "solution_approach": response.choices[0].message.content.strip(),
+        "review_focus": response.choices[0].message.content.strip(),
         "agents_run": state.get("agents_run", []) + ["knowledge_agent"]
     }
 
@@ -217,51 +206,52 @@ def knowledge_agent(state: TicketState) -> TicketState:
 #
 # What it does:
 # Takes everything collected so far
-# Writes the final reply to the customer
+# Writes the final review comment
 #
 # Why it exists:
-# This agent has the FULL context now.
-# It knows category, priority, and the
-# solution approach. So it can write
-# a much better reply than if it worked
-# alone without the other agents.
+# This agent has the FULL context now —
+# change type, risk level, and review focus —
+# so it can write a much sharper review than
+# if it worked alone.
 # ─────────────────────────────────────────
 
-def response_agent(state: TicketState) -> TicketState:
+def response_agent(state: ReviewState) -> ReviewState:
     print(">> Response Agent running...")
-    
+
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[
             {
                 "role": "system",
-                "content": """You are a professional customer support agent.
-                Write a helpful, empathetic reply.
-                - Be warm but professional
-                - Give a clear next step
-                - Keep it under 3 sentences
+                "content": """You are a senior software engineer doing a code review.
+                Write a clear, constructive review comment.
+                - Be direct but respectful
+                - Point out specific concerns if any, referencing the diff
+                - Give a clear verdict: Approve, Request Changes, or Comment
+                - Keep it under 4 sentences
                 - Do not use placeholder text"""
             },
             {
                 "role": "user",
                 "content": f"""
-                Subject: {state['subject']}
-                Description: {state['description']}
-                Category: {state['category']}
-                Priority: {state['priority']}
-                Solution Approach: {state['solution_approach']}
-                
-                Write the customer reply:
+                PR Title: {state['pr_title']}
+                Change Type: {state['change_type']}
+                Risk Level: {state['risk_level']}
+                Review Focus: {state['review_focus']}
+                Diff:
+                {state['code_diff']}
+
+                Write the review comment:
                 """
             }
         ],
         temperature=0.4,
-        max_tokens=200
+        max_tokens=250
     )
-    
+
     return {
         **state,
-        "suggested_reply": response.choices[0].message.content.strip(),
+        "review_comment": response.choices[0].message.content.strip(),
         "agents_run": state.get("agents_run", []) + ["response_agent"]
     }
 
@@ -270,55 +260,43 @@ def response_agent(state: TicketState) -> TicketState:
 # ESCALATION RESPONSE AGENT
 #
 # What it does:
-# Only runs for URGENT tickets
-# Writes a different reply that tells
-# the customer a human will contact them
+# Only runs for high/critical risk PRs
+# Writes a different message that flags
+# the PR for mandatory human review
 #
 # Why it exists:
-# Urgent tickets need a different tone.
-# We should not give an AI-generated
-# solution for fraud or legal issues.
+# High-risk changes (auth, payments, migrations)
+# should never get an AI-generated approval —
+# this agent hands it off clearly instead.
 # ─────────────────────────────────────────
 
-def escalation_response_agent(state: TicketState) -> TicketState:
+def escalation_response_agent(state: ReviewState) -> ReviewState:
     print(">> Escalation Response Agent running...")
-    
+
     return {
         **state,
-        "suggested_reply": f"We have received your urgent request regarding '{state['subject']}'. A senior human agent has been assigned and will contact you within 1 hour. We take this matter very seriously.",
+        "review_comment": f"This PR ('{state['pr_title']}') touches high-risk code ({state['risk_reason']}). It has been flagged for mandatory senior engineer review before merge. No automated approval has been given.",
         "agents_run": state.get("agents_run", []) + ["escalation_response_agent"]
     }
 
 
 # ─────────────────────────────────────────
 # BUILD THE GRAPH
-#
-# This is where we connect all agents.
-# Think of this like drawing a flowchart
-# in code. Each add_node is a box.
-# Each add_edge is an arrow between boxes.
-# add_conditional_edges is a decision diamond.
 # ─────────────────────────────────────────
 
 def build_graph():
-    # Create the graph with our state
-    graph = StateGraph(TicketState)
-    
-    # Add all agent nodes
+    graph = StateGraph(ReviewState)
+
     graph.add_node("triage_agent", triage_agent)
     graph.add_node("escalation_check", escalation_check)
     graph.add_node("knowledge_agent", knowledge_agent)
     graph.add_node("response_agent", response_agent)
     graph.add_node("escalation_response_agent", escalation_response_agent)
-    
-    # Set starting point
+
     graph.set_entry_point("triage_agent")
-    
-    # After triage, always go to escalation check
+
     graph.add_edge("triage_agent", "escalation_check")
-    
-    # After escalation check, make a decision
-    # This is the KEY difference from your old code
+
     graph.add_conditional_edges(
         "escalation_check",
         route_after_escalation,
@@ -327,55 +305,44 @@ def build_graph():
             "continue": "knowledge_agent"
         }
     )
-    
-    # Normal path: knowledge → response → end
+
     graph.add_edge("knowledge_agent", "response_agent")
     graph.add_edge("response_agent", END)
-    
-    # Escalation path: escalation response → end
     graph.add_edge("escalation_response_agent", END)
-    
+
     return graph.compile()
 
 
 # ─────────────────────────────────────────
 # MAIN DISPATCH FUNCTION
-# This replaces your old dispatch() function
-# Same input, same output format
-# But now powered by LangGraph
 # ─────────────────────────────────────────
 
-def dispatch(subject: str, description: str) -> dict:
-    
-    # Build the graph
+def dispatch(pr_title: str, code_diff: str) -> dict:
+
     app = build_graph()
-    
-    # Set initial state
+
     initial_state = {
-        "subject": subject,
-        "description": description,
-        "category": "",
-        "priority": "",
-        "urgency_reason": "",
-        "solution_approach": "",
-        "suggested_reply": "",
-        "needs_escalation": False,
+        "pr_title": pr_title,
+        "code_diff": code_diff,
+        "change_type": "",
+        "risk_level": "",
+        "risk_reason": "",
+        "review_focus": "",
+        "review_comment": "",
+        "needs_human_review": False,
         "assigned_to": "",
         "agents_run": []
     }
-    
-    # Run the graph
+
     final_state = app.invoke(initial_state)
-    
-    # Return same format as before
-    # so your existing API still works
+
     return {
-        "category": final_state["category"],
-        "priority": final_state["priority"],
-        "urgency_reason": final_state["urgency_reason"],
-        "solution_approach": final_state["solution_approach"],
-        "suggestedReply": final_state["suggested_reply"],
-        "needs_escalation": final_state["needs_escalation"],
-        "assigned_agent": final_state["assigned_to"],
+        "change_type": final_state["change_type"],
+        "risk_level": final_state["risk_level"],
+        "risk_reason": final_state["risk_reason"],
+        "review_focus": final_state["review_focus"],
+        "reviewComment": final_state["review_comment"],
+        "needs_human_review": final_state["needs_human_review"],
+        "assigned_reviewer": final_state["assigned_to"],
         "agents_run": final_state["agents_run"]
     }

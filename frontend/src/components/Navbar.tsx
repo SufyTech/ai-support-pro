@@ -1,33 +1,25 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Menu, X, Github, LayoutDashboard } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 interface NavbarProps {
-  onDashboardToggle?: () => void;
-  isDashboardOpen?: boolean;
+  onLoginClick?: () => void;
+  isLoggedIn?: boolean;
 }
 
-export default function Navbar({
-  onDashboardToggle,
-  isDashboardOpen,
-}: NavbarProps) {
+export default function Navbar({ onLoginClick, isLoggedIn }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
     return () => {
       document.body.style.overflow = "unset";
     };
@@ -52,9 +44,9 @@ export default function Navbar({
   return (
     <>
       <motion.nav
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
         className={`fixed top-0 w-full z-50 h-16 flex justify-between items-center px-6 md:px-12 border-b transition-all duration-300 ${
           isScrolled
             ? "border-border-soft bg-void/80 backdrop-blur-md"
@@ -62,13 +54,19 @@ export default function Navbar({
         }`}
       >
         {/* Logo */}
-        <div
+        <motion.div
           role="button"
-          aria-label="AI Support Pro - Go to top"
+          aria-label="AI Code Review Bot - Go to top"
           className="font-display text-xl md:text-2xl font-bold text-text-primary flex items-center gap-2 cursor-pointer group"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
-          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-white">
+          <motion.div
+            className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-white"
+            whileHover={{ rotate: -8 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -85,65 +83,67 @@ export default function Navbar({
               <line x1="12" y1="18" x2="12" y2="12" />
               <line x1="9" y1="15" x2="15" y2="15" />
             </svg>
-          </div>
+          </motion.div>
           <span className="group-hover:text-accent transition-colors">
-            AI Support{" "}
+            AI Code{" "}
             <span className="text-accent underline decoration-accent/30 underline-offset-4">
-              Pro
+              Review
             </span>
           </span>
-        </div>
+        </motion.div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex gap-10">
-          {navItems.map((item) => (
-            <button
+        <div className="hidden md:flex gap-2">
+          {navItems.map((item, i) => (
+            <motion.button
               key={item}
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.05, duration: 0.4 }}
+              onMouseEnter={() => setHoveredItem(item)}
+              onMouseLeave={() => setHoveredItem(null)}
               aria-label={`Scroll to ${item}`}
               onClick={() =>
                 scrollToId(item.toLowerCase().replace(/\s+/g, "-"))
               }
-              className="text-sm text-text-secondary font-medium hover:text-accent hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+              className="relative px-3 py-1.5 text-sm text-text-secondary font-medium hover:text-text-primary transition-colors cursor-pointer"
             >
               {item}
-            </button>
+              {hoveredItem === item && (
+                <motion.div
+                  layoutId="navHover"
+                  className="absolute inset-0 bg-surface/60 rounded-lg -z-10"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+            </motion.button>
           ))}
         </div>
 
         {/* Desktop Right Side */}
-        <div className="hidden md:flex items-center gap-3">
-          {/* Dashboard Toggle */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="hidden md:flex items-center gap-5"
+        >
           <button
-            onClick={onDashboardToggle}
-            aria-label="Toggle observability dashboard"
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border transition-all duration-200 ${
-              isDashboardOpen
-                ? "bg-accent text-white border-accent shadow-[0_0_20px_rgba(108,108,255,0.3)]"
-                : "bg-accent/10 text-accent border-accent/30 hover:bg-accent/20 hover:border-accent/50"
-            }`}
+            onClick={onLoginClick}
+            className="text-sm text-text-secondary font-medium hover:text-text-primary transition-colors"
           >
-            <LayoutDashboard className="w-4 h-4" />
-            Dashboard
+            {isLoggedIn ? "Dashboard" : "Sign In"}
           </button>
 
-          <a
-            href="https://github.com/SufyTech"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-sm text-text-secondary font-medium hover:text-accent transition-colors"
-          >
-            <Github className="w-5 h-5" />
-            GitHub
-          </a>
-
-          <button
+          <motion.button
             aria-label="View live demo"
-            onClick={() => scrollToId("contact")}
-            className="bg-accent text-white rounded-full px-7 py-2.5 text-sm font-semibold hover:brightness-110 hover:shadow-[0_0_30px_rgba(108,108,255,0.3)] transition-all cursor-pointer"
+            onClick={() => scrollToId("demo")}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="bg-accent text-white rounded-full px-6 py-2.5 text-sm font-semibold hover:brightness-110 hover:shadow-[0_0_30px_rgba(108,108,255,0.3)] transition-all cursor-pointer"
           >
-            View Live Demo
-          </button>
-        </div>
+            Try It Free
+          </motion.button>
+        </motion.div>
 
         {/* Mobile Menu Button */}
         <motion.button
@@ -164,7 +164,6 @@ export default function Navbar({
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -173,7 +172,6 @@ export default function Navbar({
               className="fixed inset-0 bg-void/95 backdrop-blur-md z-40 md:hidden"
             />
 
-            {/* Menu Content */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
@@ -182,7 +180,6 @@ export default function Navbar({
               className="fixed top-16 right-0 bottom-0 w-full max-w-sm bg-void border-l border-border-soft z-40 md:hidden overflow-y-auto"
             >
               <div className="p-6 space-y-6">
-                {/* Navigation Links */}
                 <div className="space-y-2">
                   <p className="text-xs uppercase tracking-wider text-text-muted font-bold mb-4">
                     Navigation
@@ -203,54 +200,31 @@ export default function Navbar({
                   ))}
                 </div>
 
-                {/* Divider */}
                 <div className="border-t border-border-soft" />
 
-                {/* Dashboard Button Mobile */}
                 <motion.button
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.28 }}
+                  transition={{ delay: 0.3 }}
                   onClick={() => {
-                    onDashboardToggle?.();
+                    onLoginClick?.();
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all border ${
-                    isDashboardOpen
-                      ? "bg-accent text-white border-accent"
-                      : "bg-accent/10 text-accent border-accent/30 hover:bg-accent/20"
-                  }`}
+                  className="w-full flex items-center justify-center px-4 py-3 rounded-xl font-semibold text-text-primary bg-surface/50 border border-border-soft hover:border-accent/30 transition-all"
                 >
-                  <LayoutDashboard className="w-5 h-5" />
-                  {isDashboardOpen ? "Close Dashboard" : "Open Dashboard"}
+                  {isLoggedIn ? "Go to Dashboard" : "Sign In"}
                 </motion.button>
 
-                {/* GitHub Link */}
-                <motion.a
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                  href="https://github.com/SufyTech/ai-support-pro"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary font-medium hover:bg-surface/50 hover:text-accent transition-all border border-border-soft"
-                >
-                  <Github className="w-5 h-5" />
-                  View on GitHub
-                </motion.a>
-
-                {/* CTA Button */}
                 <motion.button
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.35 }}
-                  onClick={() => scrollToId("contact")}
+                  onClick={() => scrollToId("demo")}
                   className="w-full bg-accent text-white rounded-xl px-6 py-4 font-bold hover:brightness-110 hover:shadow-[0_0_30px_rgba(108,108,255,0.3)] transition-all"
                 >
-                  View Live Demo
+                  Try It Free
                 </motion.button>
 
-                {/* Footer Info */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

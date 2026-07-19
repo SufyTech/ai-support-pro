@@ -1,33 +1,34 @@
-export type TicketStatus = 'new' | 'processing' | 'resolved' | 'escalated';
-export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent';
+export type ReviewStatus = 'new' | 'processing' | 'resolved' | 'escalated';
+export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
 
-export interface TicketHistoryItem {
+export interface ReviewHistoryItem {
   timestamp: string;
   message: string;
   actor: 'system' | 'agent' | 'user';
 }
 
-export interface Ticket {
+export interface Review {
   id: string;
-  subject: string;
-  status: TicketStatus;
-  priority: TicketPriority;
-  category: string;
+  pr_title: string;
+  status: ReviewStatus;
+  risk_level: RiskLevel;
+  change_type: string;
   createdAt: string;
-  description?: string;
-  history?: TicketHistoryItem[];
+  code_diff?: string;
+  history?: ReviewHistoryItem[];
 }
 
-export interface TicketStats {
-  totalTickets: number;
-  byStatus: Record<TicketStatus, number>;
-  byCategory: {
-    Billing: number;
-    Technical: number;
-    General: number;
-    Unknown: number;
+export interface ReviewStats {
+  totalReviews: number;
+  byStatus: Record<ReviewStatus, number>;
+  byChangeType: {
+    Feature: number;
+    "Bug Fix": number;
+    Refactor: number;
+    "Dependency Update": number;
+    Documentation: number;
   };
   avgResponseSeconds: number;
-  autoResolvedPercent: number;
+  autoApprovedPercent: number;
   monthlySavingsUsd: number;
 }

@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Ticket } from "../types";
+import { Review } from "../types";
 import {
   fadeInUp,
   staggerContainer,
@@ -11,19 +11,20 @@ import {
   AlertCircle,
   CheckCircle2,
   Sparkles,
-  User,
+  GitPullRequest,
 } from "lucide-react";
 
-interface TicketListProps {
-  tickets: Ticket[];
+interface ReviewListProps {
+  reviews: Review[];
   loading: boolean;
+  
 }
 
-export default function TicketList({ tickets, loading }: TicketListProps) {
-  const getPriorityConfig = (priority: string) => {
-    switch (priority?.toLowerCase()) {
+export default function ReviewList({ reviews, loading }: ReviewListProps) {
+  const getRiskConfig = (risk: string) => {
+    switch (risk?.toLowerCase()) {
       case "high":
-      case "urgent":
+      case "critical":
         return {
           color: "text-red-400 bg-red-500/10 border-red-500/30",
           icon: AlertCircle,
@@ -77,10 +78,10 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
 
   if (loading) {
     return (
-      <section id="ticket-list" className="py-24 bg-surface/20">
+      <section id="review-list" className="py-24 bg-surface/20">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <h2 className="text-3xl md:text-4xl font-display font-black text-center mb-12">
-            Live Ticket Stream
+            Live Review Stream
           </h2>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
@@ -108,9 +109,9 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
     );
   }
 
-  if (tickets.length === 0) {
+  if (reviews.length === 0) {
     return (
-      <section id="ticket-list" className="py-24 bg-surface/10">
+      <section id="review-list" className="py-24 bg-surface/10">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -124,8 +125,8 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
               Ready for Action
             </h2>
             <p className="text-text-secondary max-w-md mx-auto leading-relaxed">
-              No tickets yet. Create one above to see our AI agents analyze,
-              prioritize, and respond in real-time!
+              No reviews yet. Submit a PR above to see our AI agents analyze,
+              triage risk, and respond in real-time!
             </p>
           </motion.div>
         </div>
@@ -134,7 +135,7 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
   }
 
   return (
-    <section id="ticket-list" className="py-24 bg-surface/10">
+    <section id="review-list" className="py-24 bg-surface/10">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -144,17 +145,17 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-3xl md:text-4xl font-display font-black">
-              Live Ticket Stream
+              Live Review Stream
             </h2>
             <div className="flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full">
               <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
               <span className="text-xs font-bold text-accent uppercase tracking-wider">
-                {tickets.length} Active
+                {reviews.length} Active
               </span>
             </div>
           </div>
           <p className="text-text-muted">
-            Watch our AI agents process tickets in real-time
+            Watch our AI agents review pull requests in real-time
           </p>
         </motion.div>
 
@@ -165,14 +166,14 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
           viewport={viewportConfig}
           className="space-y-4"
         >
-          {tickets.map((ticket, index) => {
-            const priorityConfig = getPriorityConfig(ticket.priority);
-            const statusConfig = getStatusConfig(ticket.status);
-            const PriorityIcon = priorityConfig.icon;
+          {reviews.map((review, index) => {
+            const riskConfig = getRiskConfig((review as any).risk_level);
+            const statusConfig = getStatusConfig(review.status);
+            const RiskIcon = riskConfig.icon;
 
             return (
               <motion.div
-                key={ticket.id}
+                key={review.id}
                 variants={fadeInUp}
                 initial={{ opacity: 0, scale: 0.95, y: -20 }}
                 animate={{
@@ -195,10 +196,8 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
                 whileHover={{ scale: 1.01, y: -2 }}
                 className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-6 hover:border-accent/30 transition-all group shadow-lg hover:shadow-[0_10px_40px_rgba(108,108,255,0.15)] relative overflow-hidden"
               >
-                {/* Gradient overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-                {/* NEW badge for first ticket */}
                 {index === 0 && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0 }}
@@ -212,51 +211,46 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
 
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 relative z-10">
                   <div className="flex-1">
-                    {/* Header with badges */}
                     <div className="flex flex-wrap items-center gap-3 mb-3">
                       <h3 className="font-display font-bold text-xl text-text-primary group-hover:text-accent transition-colors">
-                        {ticket.subject}
+                        {(review as any).pr_title}
                       </h3>
 
                       <span
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border flex items-center gap-1.5 ${priorityConfig.color} ${priorityConfig.glow} shadow-lg`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border flex items-center gap-1.5 ${riskConfig.color} ${riskConfig.glow} shadow-lg`}
                       >
-                        <PriorityIcon className="w-3.5 h-3.5" />
-                        {ticket.priority}
+                        <RiskIcon className="w-3.5 h-3.5" />
+                        {(review as any).risk_level}
                       </span>
 
                       <span
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold border ${statusConfig.color} shadow-lg`}
                       >
                         <span className="mr-1">{statusConfig.icon}</span>
-                        {ticket.status}
+                        {review.status}
                       </span>
                     </div>
 
-                    {/* Description */}
-                    {ticket.description && (
-                      <p className="text-text-secondary text-sm mb-4 leading-relaxed">
-                        {ticket.description}
-                      </p>
+                    {(review as any).code_diff && (
+                      <pre className="text-text-secondary text-xs mb-4 leading-relaxed bg-surface/30 rounded-lg p-3 overflow-x-auto font-mono">
+                        {(review as any).code_diff}
+                      </pre>
                     )}
 
-                    {/* Category */}
-                    {ticket.category && (
+                    {(review as any).change_type && (
                       <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 text-accent text-xs font-bold rounded-lg mb-4 border border-accent/20">
-                        <User className="w-3.5 h-3.5" />
-                        {ticket.category}
+                        <GitPullRequest className="w-3.5 h-3.5" />
+                        {(review as any).change_type}
                       </div>
                     )}
 
-                    {/* AI Reply */}
-                    {(ticket as any).suggestedReply && (
+                    {(review as any).reviewComment && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         transition={{ delay: 0.3 }}
                         className="mt-4 p-5 bg-surface/40 rounded-xl border border-accent/20 relative overflow-hidden group/reply"
                       >
-                        {/* Shimmer effect */}
                         <motion.div
                           animate={{ x: ["-100%", "100%"] }}
                           transition={{
@@ -270,24 +264,22 @@ export default function TicketList({ tickets, loading }: TicketListProps) {
                         <div className="flex items-center gap-2 mb-3 relative z-10">
                           <Sparkles className="w-4 h-4 text-accent" />
                           <div className="text-xs font-bold text-accent uppercase tracking-wider">
-                            AI-Generated Reply
+                            AI Review Comment
                           </div>
                         </div>
                         <p className="text-text-primary text-sm leading-relaxed relative z-10 group-hover/reply:text-text-primary transition-colors">
-                          {(ticket as any).suggestedReply}
+                          {(review as any).reviewComment}
                         </p>
                       </motion.div>
                     )}
                   </div>
 
-                  {/* Timestamp */}
                   <div className="flex items-center gap-2 text-xs text-text-muted whitespace-nowrap">
                     <Clock className="w-3.5 h-3.5" />
-                    {new Date(ticket.createdAt).toLocaleString()}
+                    {new Date(review.createdAt).toLocaleString()}
                   </div>
                 </div>
 
-                {/* Ticket number badge */}
                 <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface/50 border border-border-soft flex items-center justify-center opacity-40 group-hover:opacity-70 transition-opacity">
                   <span className="text-xs font-bold text-text-muted">
                     #{index + 1}

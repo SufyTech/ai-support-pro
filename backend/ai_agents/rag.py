@@ -1,36 +1,38 @@
 import os
 import glob
+import uuid
 from groq import Groq
-import chromadb
-from chromadb.utils import embedding_functions
+from qdrant_client import QdrantClient
+from qdrant_client.models import VectorParams, Distance, PointStruct
+from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv
 
 # ── Config ────────────────────────────────────────────────────────────────────
 KNOWLEDGE_BASE_DIR = os.path.join(os.path.dirname(__file__), "..", "knowledge_base")
-CHROMA_DB_DIR = os.path.join(os.path.dirname(__file__), "..", "chroma_db")
-COLLECTION_NAME = "ai_support_pro_docs"
-from dotenv import load_dotenv
+COLLECTION_NAME = "ai-support-pro"
+
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+QDRANT_URL = os.getenv("QDRANT_URL", "")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 
-# ── Embedding function (uses sentence-transformers, runs locally) ──────────────
-embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
-    model_name="all-MiniLM-L6-v2"
-)
+# ── Embedding model (runs locally, small enough to deploy) ─────────────────────
+embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
-# ── ChromaDB client ───────────────────────────────────────────────────────────
-chroma_client = chromadb.PersistentClient(path=CHROMA_DB_DIR)
+# ── Qdrant Cloud client ──────────────────────────────────────────────────────
+qdrant = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
 
 
-def get_or_create_collection():
-    return chroma_client.get_or_create_collection(
-        name=COLLECTION_NAME,
-        embedding_function=embedding_fn,
-        metadata={"hnsw:space": "cosine"}
-    )
+def ensure_collection():
+    existing = [c.name for c in qdrant.get_collections().collections]
+    if COLLECTION_NAME not in existing:
+        qdrant.create_collection(
+            collection_name=COLLECTION_NAME,
+            vectors_config=VectorParams(size=384, distance=Distance.COSINE)
+        )
 
 
 def chunk_text(text: str, chunk_size: int = 300, overlap: int = 50) -> list[str]:
-    """Split text into overlapping chunks."""
     words = text.split()
     chunks = []
     i = 0
@@ -42,64 +44,60 @@ def chunk_text(text: str, chunk_size: int = 300, overlap: int = 50) -> list[str]
 
 
 def ingest_documents():
-    """Read all markdown files and store chunks in ChromaDB."""
-    collection = get_or_create_collection()
+    """Read all markdown files and store chunks in Qdrant Cloud."""
+    ensure_collection()
 
-    # Check if already ingested
-    existing = collection.count()
-    if existing > 0:
-        print(f"[RAG] Collection already has {existing} chunks. Skipping ingestion.")
-        return existing
+    existing_count = qdrant.count(collection_name=COLLECTION_NAME).count
+    if existing_count > 0:
+        print(f"[RAG] Collection already has {existing_count} chunks. Skipping ingestion.")
+        return existing_count
 
     md_files = glob.glob(os.path.join(KNOWLEDGE_BASE_DIR, "*.md"))
     if not md_files:
         print("[RAG] No markdown files found in knowledge_base/")
         return 0
 
-    all_chunks = []
-    all_ids = []
-    all_metadatas = []
-
+    points = []
     for filepath in md_files:
         filename = os.path.basename(filepath)
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
 
         chunks = chunk_text(content)
-        for i, chunk in enumerate(chunks):
-            chunk_id = f"{filename}_{i}"
-            all_chunks.append(chunk)
-            all_ids.append(chunk_id)
-            all_metadatas.append({"source": filename, "chunk_index": i})
+        vectors = embedder.encode(chunks).tolist()
 
-    collection.add(
-        documents=all_chunks,
-        ids=all_ids,
-        metadatas=all_metadatas
-    )
+        for i, (chunk, vector) in enumerate(zip(chunks, vectors)):
+            points.append(PointStruct(
+                id=str(uuid.uuid4()),
+                vector=vector,
+                payload={"text": chunk, "source": filename, "chunk_index": i}
+            ))
 
-    print(f"[RAG] Ingested {len(all_chunks)} chunks from {len(md_files)} files.")
-    return len(all_chunks)
+    qdrant.upsert(collection_name=COLLECTION_NAME, points=points)
+    print(f"[RAG] Ingested {len(points)} chunks from {len(md_files)} files.")
+    return len(points)
 
 
 def retrieve(query: str, n_results: int = 3) -> list[dict]:
     """Retrieve top-n relevant chunks for a query."""
-    collection = get_or_create_collection()
+    ensure_collection()
 
-    if collection.count() == 0:
+    if qdrant.count(collection_name=COLLECTION_NAME).count == 0:
         ingest_documents()
 
-    results = collection.query(
-        query_texts=[query],
-        n_results=n_results
-    )
+    query_vector = embedder.encode(query).tolist()
+    results = qdrant.query_points(
+        collection_name=COLLECTION_NAME,
+        query=query_vector,
+        limit=n_results
+    ).points
 
     chunks = []
-    for i, doc in enumerate(results["documents"][0]):
+    for r in results:
         chunks.append({
-            "text": doc,
-            "source": results["metadatas"][0][i]["source"],
-            "score": results["distances"][0][i] if results.get("distances") else None
+            "text": r.payload["text"],
+            "source": r.payload["source"],
+            "score": r.score
         })
 
     return chunks
@@ -107,8 +105,6 @@ def retrieve(query: str, n_results: int = 3) -> list[dict]:
 
 def ask(question: str) -> dict:
     """Full RAG pipeline: retrieve + generate answer with citations."""
-
-    # Step 1: Retrieve relevant chunks
     chunks = retrieve(question, n_results=3)
 
     if not chunks:
@@ -118,7 +114,6 @@ def ask(question: str) -> dict:
             "chunks_used": 0
         }
 
-    # Step 2: Build context
     context_parts = []
     sources = []
     for i, chunk in enumerate(chunks):
@@ -129,11 +124,10 @@ def ask(question: str) -> dict:
 
     context = "\n\n".join(context_parts)
 
-    # Step 3: Generate answer with Groq
     client = Groq(api_key=GROQ_API_KEY)
 
-    system_prompt = """You are a helpful customer support AI assistant.
-Answer the user's question using ONLY the provided context.
+    system_prompt = """You are a helpful code review knowledge assistant.
+Answer the user's question about coding standards, security practices, or review policy using ONLY the provided context.
 Be concise, accurate, and helpful.
 If the context doesn't contain enough information, say so clearly.
 Reference the context numbers [1], [2], [3] when citing information."""
@@ -166,4 +160,5 @@ Answer based on the context above:"""
 
 
 # ── Auto-ingest on import ─────────────────────────────────────────────────────
+ensure_collection()
 ingest_documents()

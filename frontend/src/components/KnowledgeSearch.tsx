@@ -22,20 +22,24 @@ interface RAGResult {
 
 const sampleQuestions = [
   {
-    icon: "💳",
-    label: "Cancel subscription",
-    question: "How do I cancel my subscription?",
+    icon: "🔐",
+    label: "Password hashing",
+    question: "What's our required password hashing standard?",
   },
   {
-    icon: "🔒",
-    label: "Reset password",
-    question: "How do I reset my password?",
+    icon: "📝",
+    label: "PR style guide",
+    question: "What does our style guide say about naming conventions?",
   },
-  { icon: "⚡", label: "429 errors", question: "Why am I getting 429 errors?" },
   {
-    icon: "🔌",
-    label: "Slack integration",
-    question: "How do I fix Slack integration?",
+    icon: "🛡️",
+    label: "SQL injection",
+    question: "What's our policy on raw SQL queries in PRs?",
+  },
+  {
+    icon: "⚠️",
+    label: "High-risk changes",
+    question: "What counts as a critical-risk change that needs human review?",
   },
 ];
 
@@ -104,8 +108,8 @@ export default function KnowledgeSearch() {
             Ask anything. Get instant answers.
           </h2>
           <p className="text-text-muted max-w-2xl mx-auto">
-            Our AI searches through the entire support knowledge base and
-            returns accurate, cited answers in milliseconds — powered by RAG.
+            Our AI searches your security checklist and style guide to answer
+            code review questions instantly — powered by RAG.
           </p>
         </motion.div>
 
@@ -154,7 +158,7 @@ export default function KnowledgeSearch() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="e.g., How do I cancel my subscription?"
+                placeholder="e.g., What's our policy on raw SQL queries?"
                 disabled={loading}
                 className="w-full pl-11 pr-4 py-3 bg-surface/40 border border-border-soft rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/20 transition-all disabled:opacity-50"
               />
@@ -292,7 +296,7 @@ export default function KnowledgeSearch() {
               Ask a question to search the knowledge base
             </p>
             <p className="text-xs mt-1 opacity-60">
-              Billing · Account · Technical · API
+              Security · Style Guide · Best Practices
             </p>
           </motion.div>
         )}

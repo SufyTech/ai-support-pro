@@ -7,7 +7,7 @@ import {
   CheckCircle2,
   Building2,
   Users,
-  TrendingUp,
+  ShieldCheck,
 } from "lucide-react";
 import {
   fadeInUp,
@@ -27,14 +27,14 @@ export default function Contact() {
 
   const stats = [
     { icon: Building2, value: "Beta", label: "Now Live" },
-    { icon: Users, value: "4+", label: "AI Agents" },
-    { icon: TrendingUp, value: "92%", label: "Auto-Resolved" },
+    { icon: Users, value: "4", label: "AI Agents" },
+    { icon: ShieldCheck, value: "Auto", label: "Risk Flagging" },
   ];
 
   const benefits = [
     "4 AI agents working together — Triage, Knowledge, Response, Escalation",
-    "Auto-classifies and prioritizes every ticket instantly",
-    "Real AI-generated replies using Groq LLM",
+    "Auto-classifies and prioritizes every PR instantly",
+    "Real AI-generated review comments using Groq LLM",
     "Open source — inspect every line of code",
   ];
 
@@ -63,12 +63,12 @@ export default function Contact() {
             <h2 className="text-4xl md:text-5xl font-display font-black mb-6 leading-tight">
               Ready to automate
               <br />
-              <span className="text-gradient">your support?</span>
+              <span className="text-gradient">your code reviews?</span>
             </h2>
 
             <p className="text-lg text-text-muted mb-8">
-              Try AI Support Pro and see how multi-agent AI can resolve tickets
-              faster and reduce your support workload automatically.
+              Try AI Code Review Bot and see how multi-agent AI can review PRs
+              faster and reduce your team's review workload automatically.
             </p>
 
             {/* Stats Grid */}
@@ -110,7 +110,7 @@ export default function Contact() {
                 Schedule a Demo
               </h3>
               <p className="text-text-muted mb-6">
-                See AI Support Pro in action. Get a personalized walkthrough
+                See AI Code Review Bot in action. Get a personalized walkthrough
                 tailored to your team's needs.
               </p>
 
@@ -159,7 +159,7 @@ export default function Contact() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <a
-                    href="mailto:suzkhan135@gmail.com?subject=Demo%20Request%20-%20AI%20Support%20Pro"
+                    href="mailto:suzkhan135@gmail.com?subject=Demo%20Request%20-%20AI%20Code%20Review%20Bot"
                     className="flex-1 px-4 py-3 bg-surface/40 hover:bg-surface/60 border border-border-soft hover:border-accent/30 rounded-lg text-sm font-medium text-text-primary transition-all text-center flex items-center justify-center gap-2"
                   >
                     <Mail className="w-4 h-4" />

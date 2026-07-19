@@ -6,7 +6,7 @@ import sqlite3
 import json
 from datetime import datetime
 
-DB_PATH = "tickets.db"
+DB_PATH = "reviews.db"
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -16,49 +16,36 @@ def get_db():
 def init_db():
     conn = get_db()
     conn.execute("""
-        CREATE TABLE IF NOT EXISTS tickets (
+        CREATE TABLE IF NOT EXISTS reviews (
             id TEXT PRIMARY KEY,
-            subject TEXT,
-            description TEXT,
-            category TEXT,
-            priority TEXT,
+            pr_title TEXT,
+            code_diff TEXT,
+            change_type TEXT,
+            risk_level TEXT,
             status TEXT,
-            suggestedReply TEXT,
+            reviewComment TEXT,
             createdAt TEXT,
-            assigned_agent TEXT,
-            needs_escalation INTEGER,
+            assigned_reviewer TEXT,
+            needs_human_review INTEGER,
             agents_run TEXT
         )
     """)
-    # Seed only if table is empty
-    count = conn.execute("SELECT COUNT(*) FROM tickets").fetchone()[0]
-    if count == 0:
-        seeds = [
-            ("TICK-001", "Cannot login to my account", "Getting error 'Invalid credentials' when trying to login", "Login", "high", "open", "Please try resetting your password using the Forgot Password link.", "2026-06-12T08:10:00Z", "AI Agent", 0, json.dumps(["triage_agent", "escalation_check", "knowledge_agent", "response_agent"])),
-            ("TICK-002", "Billing inquiry — charged twice", "I was charged twice for my subscription this month.", "Billing", "high", "open", "We apologize. Our billing team will process a refund within 3-5 business days.", "2026-06-12T09:22:00Z", "AI Agent", 0, json.dumps(["triage_agent", "escalation_check", "knowledge_agent", "response_agent"])),
-            ("TICK-003", "Unauthorized transaction on account", "Someone made a fraudulent charge of $500. This is urgent fraud.", "Billing", "urgent", "open", "A senior human agent has been assigned and will contact you within 1 hour.", "2026-06-12T10:05:00Z", "Human Agent", 1, json.dumps(["triage_agent", "escalation_check", "escalation_response_agent"])),
-            ("TICK-004", "Password reset link not working", "I forgot my password and the reset link expired.", "Login", "medium", "open", "We have sent a new password reset link to your email.", "2026-06-12T11:30:00Z", "AI Agent", 0, json.dumps(["triage_agent", "escalation_check", "knowledge_agent", "response_agent"])),
-            ("TICK-005", "API rate limit exceeded", "Getting 429 errors on all API calls since this morning.", "Technical", "high", "open", "Your plan limit has been reached. Please upgrade or wait for the reset.", "2026-06-12T12:15:00Z", "AI Agent", 0, json.dumps(["triage_agent", "escalation_check", "knowledge_agent", "response_agent"])),
-            ("TICK-006", "Account suspended without warning", "My account was suspended suddenly. I need immediate help.", "Account", "urgent", "open", "A senior human agent has been assigned and will contact you within 1 hour.", "2026-06-12T13:40:00Z", "Human Agent", 1, json.dumps(["triage_agent", "escalation_check", "escalation_response_agent"])),
-            ("TICK-007", "Feature request — dark mode", "Would love to see dark mode support in the dashboard.", "General", "low", "open", "Thank you for your suggestion! We have added this to our product roadmap.", "2026-06-12T14:00:00Z", "AI Agent", 0, json.dumps(["triage_agent", "escalation_check", "knowledge_agent", "response_agent"])),
-            ("TICK-008", "Integration with Slack not working", "The Slack integration stopped sending notifications yesterday.", "Technical", "medium", "open", "Please reconnect the Slack integration from Settings > Integrations.", "2026-06-12T15:20:00Z", "AI Agent", 0, json.dumps(["triage_agent", "escalation_check", "knowledge_agent", "response_agent"])),
-        ]
-        conn.executemany("INSERT INTO tickets VALUES (?,?,?,?,?,?,?,?,?,?,?)", seeds)
-        conn.commit()
+    conn.commit()
     conn.close()
+    # NOTE: seed data intentionally removed. The table starts empty and
+    # only fills in as real PRs come through POST /api/reviews.
 
 def row_to_dict(row):
     d = dict(row)
-    d["needs_escalation"] = bool(d["needs_escalation"])
+    d["needs_human_review"] = bool(d["needs_human_review"])
     d["agents_run"] = json.loads(d["agents_run"]) if d["agents_run"] else []
     return d
 
-# Init DB on startup
 init_db()
 
 app = FastAPI(
-    title="AI Support Pro API",
-    description="Multi-Agent Customer Support System",
+    title="AI Code Review Bot API",
+    description="Multi-Agent Automated Code Review System",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -80,22 +67,22 @@ async def add_cors_headers(request, call_next):
     response.headers["Access-Control-Allow-Headers"] = "*"
     return response
 
-class TicketCreate(BaseModel):
-    subject: str
-    description: str
+class ReviewCreate(BaseModel):
+    pr_title: str
+    code_diff: str
 
 class RAGQuery(BaseModel):
     question: str
-    
+
 @app.get("/")
 @app.head("/")
 def read_root():
-    return {"message": "AI Support Pro API is running!", "status": "operational", "version": "1.0.0", "docs": "/docs"}
+    return {"message": "AI Code Review Bot API is running!", "status": "operational", "version": "1.0.0", "docs": "/docs"}
 
 @app.get("/health")
 @app.head("/health")
 def health_check():
-    return {"status": "healthy", "service": "AI Support Pro"}
+    return {"status": "healthy", "service": "AI Code Review Bot"}
 
 @app.get("/api/status")
 @app.head("/api/status")
@@ -112,98 +99,98 @@ def get_agents():
         {"name": "Escalation Agent", "status": "active"}
     ]}
 
-@app.get("/api/tickets")
-@app.head("/api/tickets")
-async def get_tickets():
+@app.get("/api/reviews")
+@app.head("/api/reviews")
+async def get_reviews():
     conn = get_db()
-    rows = conn.execute("SELECT * FROM tickets ORDER BY createdAt DESC").fetchall()
+    rows = conn.execute("SELECT * FROM reviews ORDER BY createdAt DESC").fetchall()
     conn.close()
     return [row_to_dict(r) for r in rows]
 
-@app.get("/api/tickets/stats")
-@app.head("/api/tickets/stats")
-async def get_ticket_stats():
+@app.get("/api/reviews/stats")
+@app.head("/api/reviews/stats")
+async def get_review_stats():
     conn = get_db()
-    rows = conn.execute("SELECT * FROM tickets").fetchall()
+    rows = conn.execute("SELECT * FROM reviews").fetchall()
     conn.close()
-    tickets = [row_to_dict(r) for r in rows]
+    reviews = [row_to_dict(r) for r in rows]
 
-    total = len(tickets)
+    total = len(reviews)
     if total == 0:
-        return {"totalTickets": 0, "escalated": 0, "normal": 0, "escalation_rate": 0,
-                "agents_frequency": {}, "categories": {}, "priorities": {}}
+        return {"totalReviews": 0, "escalated": 0, "normal": 0, "escalation_rate": 0,
+                "agents_frequency": {}, "change_types": {}, "risk_levels": {}}
 
-    escalated = sum(1 for t in tickets if t["needs_escalation"])
+    escalated = sum(1 for r in reviews if r["needs_human_review"])
 
     agents_frequency = {}
-    for t in tickets:
-        for agent in t["agents_run"]:
+    for r in reviews:
+        for agent in r["agents_run"]:
             agents_frequency[agent] = agents_frequency.get(agent, 0) + 1
 
-    categories = {}
-    for t in tickets:
-        c = t["category"]
-        categories[c] = categories.get(c, 0) + 1
+    change_types = {}
+    for r in reviews:
+        c = r["change_type"]
+        change_types[c] = change_types.get(c, 0) + 1
 
-    priorities = {}
-    for t in tickets:
-        p = t["priority"]
-        priorities[p] = priorities.get(p, 0) + 1
+    risk_levels = {}
+    for r in reviews:
+        p = r["risk_level"]
+        risk_levels[p] = risk_levels.get(p, 0) + 1
 
     return {
-        "totalTickets": total,
+        "totalReviews": total,
         "escalated": escalated,
         "normal": total - escalated,
         "escalation_rate": round((escalated / total) * 100, 1),
         "agents_frequency": agents_frequency,
-        "categories": categories,
-        "priorities": priorities
+        "change_types": change_types,
+        "risk_levels": risk_levels
     }
 
-@app.post("/api/tickets")
-async def create_ticket(ticket: TicketCreate):
-    category = "General"
-    priority = "medium"
-    suggested_reply = "Thank you for contacting us. Our support team will review your inquiry shortly."
-    assigned_agent = "AI Agent"
-    needs_escalation = False
+@app.post("/api/reviews")
+async def create_review(review: ReviewCreate):
+    change_type = "Refactor"
+    risk_level = "medium"
+    review_comment = "Thank you for the PR. Our review system will process it shortly."
+    assigned_reviewer = "AI Reviewer"
+    needs_human_review = False
     agents_run = []
 
     try:
         from ai_agents.graph import dispatch
-        ai_response = dispatch(subject=ticket.subject, description=ticket.description)
-        category = ai_response.get("category", category)
-        priority = ai_response.get("priority", priority)
-        suggested_reply = ai_response.get("suggestedReply", suggested_reply)
-        assigned_agent = ai_response.get("assigned_agent", assigned_agent)
-        needs_escalation = ai_response.get("needs_escalation", False)
+        ai_response = dispatch(pr_title=review.pr_title, code_diff=review.code_diff)
+        change_type = ai_response.get("change_type", change_type)
+        risk_level = ai_response.get("risk_level", risk_level)
+        review_comment = ai_response.get("reviewComment", review_comment)
+        assigned_reviewer = ai_response.get("assigned_reviewer", assigned_reviewer)
+        needs_human_review = ai_response.get("needs_human_review", False)
         agents_run = ai_response.get("agents_run", [])
     except Exception as e:
         print(f"AI dispatch failed, using fallback: {e}")
 
-    ticket_id = f"TICK-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+    review_id = f"PR-{datetime.now().strftime('%Y%m%d%H%M%S')}"
     created_at = datetime.now().isoformat() + "Z"
 
     conn = get_db()
     conn.execute(
-        "INSERT INTO tickets VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-        (ticket_id, ticket.subject, ticket.description, category, priority, "open",
-         suggested_reply, created_at, assigned_agent, int(needs_escalation), json.dumps(agents_run))
+        "INSERT INTO reviews VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        (review_id, review.pr_title, review.code_diff, change_type, risk_level, "open",
+         review_comment, created_at, assigned_reviewer, int(needs_human_review), json.dumps(agents_run))
     )
     conn.commit()
     conn.close()
 
     return {
-        "id": ticket_id,
-        "subject": ticket.subject,
-        "description": ticket.description,
-        "category": category,
-        "priority": priority,
+        "id": review_id,
+        "pr_title": review.pr_title,
+        "code_diff": review.code_diff,
+        "change_type": change_type,
+        "risk_level": risk_level,
         "status": "open",
-        "suggestedReply": suggested_reply,
+        "reviewComment": review_comment,
         "createdAt": created_at,
-        "assigned_agent": assigned_agent,
-        "needs_escalation": needs_escalation,
+        "assigned_reviewer": assigned_reviewer,
+        "needs_human_review": needs_human_review,
         "agents_run": agents_run
     }
 
@@ -230,12 +217,13 @@ async def rag_ask(query: RAGQuery):
 async def rag_status():
     """Check RAG knowledge base status"""
     try:
-        from ai_agents.rag import get_or_create_collection
-        collection = get_or_create_collection()
+        from ai_agents.rag import qdrant, COLLECTION_NAME, ensure_collection
+        ensure_collection()
+        count = qdrant.count(collection_name=COLLECTION_NAME).count
         return {
             "status": "ready",
-            "chunks_indexed": collection.count(),
-            "collection": "ai_support_pro_docs"
+            "chunks_indexed": count,
+            "collection": COLLECTION_NAME
         }
     except Exception as e:
         return {"status": "error", "error": str(e)}

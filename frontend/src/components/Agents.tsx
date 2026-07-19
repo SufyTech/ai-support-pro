@@ -1,4 +1,10 @@
-import { Shield, Target, MessageCircle, BookOpen, Zap } from "lucide-react";
+import {
+  AlertTriangle,
+  ShieldAlert,
+  BookOpen,
+  GitPullRequest,
+  Zap,
+} from "lucide-react";
 import { motion } from "motion/react";
 import {
   fadeInUp,
@@ -9,36 +15,36 @@ import {
 
 const agents = [
   {
-    title: "Classification Agent",
-    description:
-      "Instantly identifies intent and sentiment of incoming messages to route them correctly.",
-    icon: Shield,
-    color: "#6c6cff",
-    stat: "High-accuracy intent detection", // was "99.2% accuracy"
-  },
-  {
     title: "Triage Agent",
     description:
-      "Prioritizes tickets based on urgency and customer tiering to ensure SLA compliance.",
-    icon: Target,
-    color: "#22d3a0",
-    stat: "Fast priority routing", // was "< 2s response"
+      "Classifies the type of code change and assigns a risk level based on what the diff actually touches.",
+    icon: GitPullRequest,
+    color: "#6c6cff",
+    stat: "Instant change classification",
   },
   {
-    title: "Reply Agent",
+    title: "Escalation Agent",
     description:
-      "Drafts personalized responses based on previous interactions and company tone.",
-    icon: MessageCircle,
-    color: "#c1c1ff",
-    stat: "Human-like AI replies", // was "95% satisfaction"
+      "Flags high-risk changes — auth, payments, migrations — for mandatory human review before merge.",
+    icon: ShieldAlert,
+    color: "#22d3a0",
+    stat: "Catches risky diffs automatically",
   },
   {
     title: "Knowledge Agent",
     description:
-      "Syncs with your documentation to provide accurate, grounded information to customers.",
+      "Syncs with your style guide and security checklist to ground every review in your team's actual standards.",
     icon: BookOpen,
     color: "#a78bfa",
-    stat: "Docs-aware answers", // was "10K+ docs indexed"
+    stat: "Docs-aware reviews",
+  },
+  {
+    title: "Response Agent",
+    description:
+      "Writes a clear review comment with a verdict — Approve, Request Changes, or Comment — grounded in the full context.",
+    icon: AlertTriangle,
+    color: "#c1c1ff",
+    stat: "Human-like review comments",
   },
 ];
 
@@ -57,11 +63,11 @@ export default function Agents() {
         </span>
         <h2 className="font-display text-4xl md:text-6xl font-bold mb-6 tracking-tight">
           Specialized agents for
-          <br className="hidden md:block" /> specialized tasks.
+          <br className="hidden md:block" /> specialized review steps.
         </h2>
         <p className="text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
           Powered by a custom multi-agent orchestration layer, our AI agents
-          collaborate to handle every aspect of customer support.
+          collaborate to handle every aspect of a code review.
         </p>
       </motion.div>
 
@@ -81,7 +87,6 @@ export default function Agents() {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="bg-surface/30 border border-border rounded-2xl p-8 hover:bg-surface/50 hover:border-accent/50 transition-all duration-300 group shadow-lg hover:shadow-[0_20px_40px_rgba(108,108,255,0.15)] relative overflow-hidden"
           >
-            {/* Gradient Background Effect */}
             <div
               className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none"
               style={{
@@ -89,7 +94,6 @@ export default function Agents() {
               }}
             />
 
-            {/* Icon Container */}
             <motion.div
               whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
               transition={{ duration: 0.5 }}
@@ -102,7 +106,6 @@ export default function Agents() {
             >
               <agent.icon className="w-7 h-7" />
 
-              {/* Pulse Effect */}
               <motion.div
                 initial={{ scale: 1, opacity: 0 }}
                 whileHover={{ scale: 1.8, opacity: [0, 0.3, 0] }}
@@ -112,7 +115,6 @@ export default function Agents() {
               />
             </motion.div>
 
-            {/* Content */}
             <div className="relative z-10">
               <h3 className="font-display text-xl font-bold mb-3 text-text-primary group-hover:text-accent transition-colors">
                 {agent.title}
@@ -121,7 +123,6 @@ export default function Agents() {
                 {agent.description}
               </p>
 
-              {/* Stat Badge */}
               <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border-soft/50">
                 <Zap className="w-3.5 h-3.5 text-accent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <span
@@ -133,7 +134,6 @@ export default function Agents() {
               </div>
             </div>
 
-            {/* Number Badge */}
             <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface/50 border border-border-soft flex items-center justify-center opacity-30 group-hover:opacity-60 transition-opacity">
               <span className="text-xs font-bold text-text-muted">
                 {(index + 1).toString().padStart(2, "0")}
@@ -143,7 +143,6 @@ export default function Agents() {
         ))}
       </motion.div>
 
-      {/* Bottom CTA */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

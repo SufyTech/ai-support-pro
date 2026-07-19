@@ -52,14 +52,14 @@ export default function Footer() {
         {/* Brand Section */}
         <motion.div variants={fadeInUp} className="col-span-2 md:col-span-1">
           <div className="font-display text-2xl font-bold text-text-primary mb-4">
-            AI Support{" "}
+            AI CodeReview {" "}
             <span className="text-accent underline decoration-accent/30 underline-offset-4">
               Pro
             </span>
           </div>
           <p className="text-text-muted text-sm font-medium leading-relaxed max-w-xs mb-6">
-            Your support team, supercharged. Engineered for precision and 24/7
-            reliability.
+            Your code review team, supercharged. Engineered for precision and
+            instant PR feedback.
           </p>
 
           {/* Newsletter signup */}
@@ -170,7 +170,7 @@ export default function Footer() {
       >
         <div className="flex flex-col md:flex-row items-center gap-4">
           <p className="text-[11px] font-bold text-text-muted uppercase tracking-[0.3em]">
-            © {currentYear} AI Support Pro. All rights reserved.
+            © {currentYear} AI CodeReview Pro. All rights reserved.
           </p>
           <div className="hidden md:block w-1 h-1 rounded-full bg-border-soft" />
           <p className="text-[11px] text-text-muted flex items-center gap-1.5">

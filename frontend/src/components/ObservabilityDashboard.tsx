@@ -15,12 +15,12 @@ import axios from "axios";
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 const COLORS = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#3b82f6"];
 
-const pColor = (p: string) =>
-  ({ urgent: "#ef4444", high: "#f59e0b", medium: "#6366f1", low: "#10b981" })[
-    p
+const rColor = (r: string) =>
+  ({ critical: "#ef4444", high: "#f59e0b", medium: "#6366f1", low: "#10b981" })[
+    r
   ] || "#64748b";
 
-const aColor = (a: string) => (a?.includes("Human") ? "#ef4444" : "#10b981");
+const revColor = (a: string) => (a?.includes("Human") ? "#ef4444" : "#10b981");
 
 const tt = {
   contentStyle: {
@@ -67,21 +67,21 @@ const badge = (color: string): React.CSSProperties => ({
 });
 
 interface Stats {
-  totalTickets: number;
+  totalReviews: number;
   escalated: number;
   normal: number;
   escalation_rate: number;
   agents_frequency: Record<string, number>;
-  categories: Record<string, number>;
-  priorities: Record<string, number>;
+  change_types: Record<string, number>;
+  risk_levels: Record<string, number>;
 }
 
-interface Ticket {
+interface Review {
   id: string;
-  subject: string;
-  category: string;
-  priority: string;
-  assigned_agent: string;
+  pr_title: string;
+  change_type: string;
+  risk_level: string;
+  assigned_reviewer: string;
   agents_run: string[];
 }
 
@@ -93,19 +93,19 @@ export default function ObservabilityDashboard({
   onClose,
 }: ObservabilityDashboardProps) {
   const [stats, setStats] = useState<Stats | null>(null);
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(new Date());
 
   const fetchData = async () => {
     try {
-      const [s, t] = await Promise.all([
-        axios.get(`${API}/api/tickets/stats`),
-        axios.get(`${API}/api/tickets`),
+      const [s, r] = await Promise.all([
+        axios.get(`${API}/api/reviews/stats`),
+        axios.get(`${API}/api/reviews`),
       ]);
       setStats(s.data);
-      setTickets(Array.isArray(t.data) ? t.data : []);
+      setReviews(Array.isArray(r.data) ? r.data : []);
       setError(null);
       setRefresh(new Date());
     } catch {
@@ -128,18 +128,21 @@ export default function ObservabilityDashboard({
       }))
     : [];
 
-  const catData = stats?.categories
-    ? Object.entries(stats.categories).map(([n, c]) => ({ name: n, count: c }))
+  const changeTypeData = stats?.change_types
+    ? Object.entries(stats.change_types).map(([n, c]) => ({
+        name: n,
+        count: c,
+      }))
     : [];
 
-  const priData = stats?.priorities
-    ? Object.entries(stats.priorities).map(([n, v]) => ({ name: n, value: v }))
+  const riskData = stats?.risk_levels
+    ? Object.entries(stats.risk_levels).map(([n, v]) => ({ name: n, value: v }))
     : [];
 
   const escData = stats
     ? [
-        { name: "AI Resolved", value: stats.normal || 0 },
-        { name: "Escalated", value: stats.escalated || 0 },
+        { name: "AI Approved", value: stats.normal || 0 },
+        { name: "Human Review", value: stats.escalated || 0 },
       ]
     : [];
 
@@ -150,7 +153,7 @@ export default function ObservabilityDashboard({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          height: "calc(100vh - 64px)",
+          height: "60vh",
           fontFamily: "'Inter',system-ui,sans-serif",
         }}
       >
@@ -181,7 +184,7 @@ export default function ObservabilityDashboard({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          height: "calc(100vh - 64px)",
+          height: "60vh",
           fontFamily: "'Inter',system-ui,sans-serif",
         }}
       >
@@ -234,7 +237,6 @@ export default function ObservabilityDashboard({
       style={{
         fontFamily: "'Inter',system-ui,sans-serif",
         color: "#e2e8f0",
-        minHeight: "calc(100vh - 64px)",
       }}
     >
       <style>{`
@@ -256,7 +258,6 @@ export default function ObservabilityDashboard({
           .dash-grid-4{grid-template-columns:1fr 1fr!important}
           .dash-grid-2{grid-template-columns:1fr!important}
           .dash-main{padding:20px 16px!important}
-          .dash-header{padding:0 16px!important}
           .dash-table{font-size:11px!important}
         }
         @media(max-width:480px){
@@ -264,119 +265,61 @@ export default function ObservabilityDashboard({
         }
       `}</style>
 
-      {/* Header */}
+      {/* Small inline refresh row, replaces old header */}
       <div
-        className="dash-header"
         style={{
-          background: "rgba(10,10,28,0.97)",
-          backdropFilter: "blur(20px)",
-          borderBottom: "1px solid rgba(99,102,241,0.12)",
-          padding: "0 48px",
-          height: 60,
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
+          gap: 10,
+          marginBottom: 20,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            background: "rgba(16,185,129,0.08)",
+            border: "1px solid rgba(16,185,129,0.2)",
+            borderRadius: 20,
+            padding: "4px 12px",
+            fontSize: 11,
+            color: "#10b981",
+            fontWeight: 700,
+          }}
+        >
           <div
             style={{
-              width: 36,
-              height: 36,
-              background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
-              borderRadius: 10,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 16,
-              boxShadow: "0 0 20px rgba(99,102,241,0.4)",
+              width: 6,
+              height: 6,
+              borderRadius: "50%",
+              background: "#10b981",
+              animation: "pulse 2s infinite",
             }}
-          >
-            ⚡
-          </div>
-          <div>
-            <div
-              style={{
-                fontSize: 15,
-                fontWeight: 800,
-                background: "linear-gradient(90deg,#fff 40%,#a78bfa)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              AI Support Observability
-            </div>
-            <div style={{ fontSize: 11, color: "#334155", marginTop: 1 }}>
-              Real-time agent monitoring · {refresh.toLocaleTimeString()}
-            </div>
-          </div>
+          />
+          LIVE · {refresh.toLocaleTimeString()}
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              background: "rgba(16,185,129,0.08)",
-              border: "1px solid rgba(16,185,129,0.2)",
-              borderRadius: 20,
-              padding: "4px 12px",
-              fontSize: 11,
-              color: "#10b981",
-              fontWeight: 700,
-            }}
-          >
-            <div
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "#10b981",
-                animation: "pulse 2s infinite",
-              }}
-            />
-            LIVE
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              color: "#94a3b8",
-              borderRadius: 9,
-              padding: "6px 16px",
-              cursor: "pointer",
-              fontSize: 13,
-              fontWeight: 600,
-              fontFamily: "inherit",
-            }}
-          >
-            ← Back
-          </button>
-          <button
-            onClick={fetchData}
-            style={{
-              background: "rgba(99,102,241,0.1)",
-              border: "1px solid rgba(99,102,241,0.25)",
-              color: "#a78bfa",
-              borderRadius: 9,
-              padding: "6px 16px",
-              cursor: "pointer",
-              fontSize: 13,
-              fontWeight: 600,
-              fontFamily: "inherit",
-            }}
-          >
-            ↻ Refresh
-          </button>
-        </div>
+        <button
+          onClick={fetchData}
+          style={{
+            background: "rgba(99,102,241,0.1)",
+            border: "1px solid rgba(99,102,241,0.25)",
+            color: "#a78bfa",
+            borderRadius: 9,
+            padding: "6px 16px",
+            cursor: "pointer",
+            fontSize: 13,
+            fontWeight: 600,
+            fontFamily: "inherit",
+          }}
+        >
+          ↻ Refresh
+        </button>
       </div>
 
       {/* Main */}
-      <div
-        className="dash-main"
-        style={{ padding: "32px 48px", maxWidth: 1500, margin: "0 auto" }}
-      >
+      <div className="dash-main">
         {/* Stat Cards */}
         <div style={{ marginBottom: 28 }}>
           <div style={S.secLabel}>
@@ -406,23 +349,23 @@ export default function ObservabilityDashboard({
           >
             {[
               {
-                label: "Total Tickets",
-                value: stats?.totalTickets ?? 0,
+                label: "Total Reviews",
+                value: stats?.totalReviews ?? 0,
                 sub: "All time",
-                icon: "🎫",
+                icon: "🔍",
                 color: "#6366f1",
                 glow: "rgba(99,102,241,0.2)",
               },
               {
                 label: "Escalated",
                 value: stats?.escalated ?? 0,
-                sub: "Human Agent assigned",
+                sub: "Human reviewer assigned",
                 icon: "🚨",
                 color: "#ef4444",
                 glow: "rgba(239,68,68,0.15)",
               },
               {
-                label: "AI Resolved",
+                label: "AI Approved",
                 value: stats?.normal ?? 0,
                 sub: "Fully automated",
                 icon: "🤖",
@@ -540,7 +483,7 @@ export default function ObservabilityDashboard({
                 Agent Execution Frequency
               </div>
               <div style={{ fontSize: 11, color: "#334155", marginBottom: 20 }}>
-                How many times each agent ran across all tickets
+                How many times each agent ran across all reviews
               </div>
               {agentData.length === 0 ? (
                 <div
@@ -687,7 +630,7 @@ export default function ObservabilityDashboard({
                 background: "rgba(99,102,241,0.08)",
               }}
             />
-            Ticket Breakdown
+            Review Breakdown
             <div
               style={{
                 flex: 1,
@@ -720,12 +663,12 @@ export default function ObservabilityDashboard({
                     background: "#f59e0b",
                   }}
                 />
-                By Category
+                By Change Type
               </div>
               <div style={{ fontSize: 11, color: "#334155", marginBottom: 20 }}>
-                Ticket volume per category
+                PR volume per change type
               </div>
-              {catData.length === 0 ? (
+              {changeTypeData.length === 0 ? (
                 <div
                   style={{
                     color: "#1e293b",
@@ -739,7 +682,7 @@ export default function ObservabilityDashboard({
               ) : (
                 <ResponsiveContainer width="100%" height={170}>
                   <BarChart
-                    data={catData}
+                    data={changeTypeData}
                     layout="vertical"
                     barSize={10}
                     margin={{ left: 0 }}
@@ -761,7 +704,7 @@ export default function ObservabilityDashboard({
                     />
                     <Tooltip {...tt} />
                     <Bar dataKey="count" radius={[0, 6, 6, 0]}>
-                      {catData.map((_, i) => (
+                      {changeTypeData.map((_, i) => (
                         <Cell key={i} fill={COLORS[i % COLORS.length]} />
                       ))}
                     </Bar>
@@ -790,12 +733,12 @@ export default function ObservabilityDashboard({
                     background: "#ef4444",
                   }}
                 />
-                By Priority
+                By Risk Level
               </div>
               <div style={{ fontSize: 11, color: "#334155", marginBottom: 20 }}>
-                Distribution across priority levels
+                Distribution across risk levels
               </div>
-              {priData.length === 0 ? (
+              {riskData.length === 0 ? (
                 <div
                   style={{
                     color: "#1e293b",
@@ -808,11 +751,11 @@ export default function ObservabilityDashboard({
                 </div>
               ) : (
                 <div style={{ paddingTop: 4 }}>
-                  {priData.map((p) => {
-                    const pct = stats?.totalTickets
-                      ? Math.round((p.value / stats.totalTickets) * 100)
+                  {riskData.map((p) => {
+                    const pct = stats?.totalReviews
+                      ? Math.round((p.value / stats.totalReviews) * 100)
                       : 0;
-                    const col = pColor(p.name);
+                    const col = rColor(p.name);
                     return (
                       <div key={p.name} style={{ marginBottom: 16 }}>
                         <div
@@ -872,7 +815,7 @@ export default function ObservabilityDashboard({
           </div>
         </div>
 
-        {/* Recent Tickets */}
+        {/* Recent Reviews */}
         <div>
           <div style={S.secLabel}>
             <div
@@ -882,7 +825,7 @@ export default function ObservabilityDashboard({
                 background: "rgba(99,102,241,0.08)",
               }}
             />
-            Recent Tickets
+            Recent Reviews
             <div
               style={{
                 flex: 1,
@@ -902,10 +845,10 @@ export default function ObservabilityDashboard({
               }}
             >
               <div style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8" }}>
-                All Tickets
+                All Reviews
               </div>
               <div style={{ fontSize: 11, color: "#334155" }}>
-                {tickets.length} total
+                {reviews.length} total
               </div>
             </div>
             <div style={{ overflowX: "auto" }}>
@@ -923,10 +866,10 @@ export default function ObservabilityDashboard({
                   >
                     {[
                       "ID",
-                      "Subject",
-                      "Category",
-                      "Priority",
-                      "Assigned To",
+                      "PR Title",
+                      "Change Type",
+                      "Risk Level",
+                      "Reviewer",
                       "Agent Flow",
                     ].map((h) => (
                       <th
@@ -952,11 +895,11 @@ export default function ObservabilityDashboard({
                   </tr>
                 </thead>
                 <tbody>
-                  {[...tickets]
+                  {[...reviews]
                     .reverse()
                     .slice(0, 20)
-                    .map((t) => (
-                      <tr key={t.id}>
+                    .map((r) => (
+                      <tr key={r.id}>
                         <td
                           style={{
                             padding: "13px 16px 13px 28px",
@@ -966,7 +909,7 @@ export default function ObservabilityDashboard({
                             whiteSpace: "nowrap",
                           }}
                         >
-                          {t.id}
+                          {r.id}
                         </td>
                         <td
                           style={{
@@ -979,21 +922,21 @@ export default function ObservabilityDashboard({
                             fontWeight: 500,
                           }}
                         >
-                          {t.subject}
+                          {r.pr_title}
                         </td>
                         <td style={{ padding: "13px 16px 13px 0" }}>
                           <span style={badge("#3b82f6")}>
-                            {t.category || "—"}
+                            {r.change_type || "—"}
                           </span>
                         </td>
                         <td style={{ padding: "13px 16px 13px 0" }}>
-                          <span style={badge(pColor(t.priority))}>
-                            {t.priority || "—"}
+                          <span style={badge(rColor(r.risk_level))}>
+                            {r.risk_level || "—"}
                           </span>
                         </td>
                         <td style={{ padding: "13px 16px 13px 0" }}>
-                          <span style={badge(aColor(t.assigned_agent))}>
-                            {t.assigned_agent || "—"}
+                          <span style={badge(revColor(r.assigned_reviewer))}>
+                            {r.assigned_reviewer || "—"}
                           </span>
                         </td>
                         <td style={{ padding: "13px 28px 13px 0" }}>
@@ -1005,8 +948,8 @@ export default function ObservabilityDashboard({
                               flexWrap: "wrap",
                             }}
                           >
-                            {Array.isArray(t.agents_run)
-                              ? t.agents_run.map((a, i) => (
+                            {Array.isArray(r.agents_run)
+                              ? r.agents_run.map((a, i) => (
                                   <span
                                     key={i}
                                     style={{
@@ -1022,7 +965,7 @@ export default function ObservabilityDashboard({
                                         .replace("_agent", "")
                                         .replace(/_/g, " ")}
                                     </span>
-                                    {i < t.agents_run.length - 1 && (
+                                    {i < r.agents_run.length - 1 && (
                                       <span
                                         style={{
                                           color: "#1e293b",

@@ -59,9 +59,9 @@ export default function Security() {
             <br /> by default.
           </h2>
           <p className="text-base sm:text-lg text-text-secondary mb-8 sm:mb-10 leading-relaxed max-w-lg">
-            We understand that your data is your most valuable asset. AI Support
-            Pro is built with a zero-trust architecture and military-grade
-            encryption.
+            We understand that your data is your most valuable asset. AI CodeReview 
+            Pro is built with a zero-trust architecture and
+            military-grade encryption.
           </p>
 
           {/* Security Features List */}

@@ -1,7 +1,7 @@
 import {
-  Inbox,
-  Layout,
-  GitBranch,
+  GitPullRequest,
+  MessageSquareCode,
+  ShieldAlert,
   BarChart3,
   ArrowRight,
   Zap,
@@ -16,40 +16,40 @@ import {
 
 const solutions = [
   {
-    title: "Shared Inbox Automation",
+    title: "PR Risk Triage",
     description:
-      "Unify all support channels into a single, AI-managed stream that categorizes and assigns tickets automatically.",
-    icon: Inbox,
+      "Every incoming PR is automatically classified by change type and assigned a risk level in seconds, before a human ever opens the diff.",
+    icon: GitPullRequest,
     color: "#6c6cff",
-    stat: "AI-powered routing", // was "10x faster"
-    features: ["Multi-channel sync", "Auto-categorization", "Smart routing"],
+    stat: "Instant risk scoring",
+    features: ["Change-type detection", "Risk scoring", "Automatic routing"],
   },
   {
-    title: "In-product Widget",
+    title: "Inline Review Comments",
     description:
-      "Deploy our lightweight, context-aware support widget directly into your app for instant customer assistance.",
-    icon: Layout,
+      "AI-written review comments, grounded in your team's style guide and security checklist, posted directly on the PR with a clear verdict.",
+    icon: MessageSquareCode,
     color: "#22d3a0",
-    stat: "Lightweight widget", // was "< 50KB"
-    features: ["Zero config", "Customizable UI", "Real-time chat"],
+    stat: "Style-guide grounded",
+    features: ["Approve / Request changes / Comment", "Context-aware", "No generic feedback"],
   },
   {
     title: "Escalation Routing",
     description:
-      "Intelligent handoff from AI to human agents when complex issues arise, ensuring no customer is left behind.",
-    icon: GitBranch,
+      "High-risk changes — auth, payments, migrations — are automatically flagged for mandatory human review before merge, so nothing risky slips through.",
+    icon: ShieldAlert,
     color: "#c1c1ff",
-    stat: "Smart escalation", // was "98% accuracy"
-    features: ["Smart handoff", "Priority queuing", "Agent matching"],
+    stat: "Zero-config escalation",
+    features: ["Auth & payment detection", "Migration flagging", "Mandatory human gate"],
   },
   {
-    title: "Analytics & Reporting",
+    title: "Review Analytics",
     description:
-      "Deep insights into agent performance, customer satisfaction, and automated resolution rates.",
+      "Track approval rates, risk trends, and review turnaround across your whole PR history from a single dashboard.",
     icon: BarChart3,
     color: "#a78bfa",
-    stat: "Live insights", // was "Real-time" as a performance claim
-    features: ["Live dashboards", "Custom reports", "Export data"],
+    stat: "Live insights",
+    features: ["Live dashboards", "Risk trends", "Export data"],
   },
 ];
 
@@ -67,12 +67,12 @@ export default function Solutions() {
           Complete Platform
         </span>
         <h2 className="font-display text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-          Everything your support team
+          Everything your review process
           <br className="hidden md:block" /> needs, automated.
         </h2>
         <p className="text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
-          A modular architecture designed to handle every stage of the support
-          lifecycle with AI-powered intelligence.
+          A modular architecture designed to handle every stage of the code
+          review lifecycle with AI-powered intelligence.
         </p>
       </motion.div>
 
@@ -186,13 +186,13 @@ export default function Solutions() {
         className="mt-16 text-center"
       >
         <p className="text-sm text-text-muted mb-4">
-          Designed to work alongside your existing support tools, with
+          Designed to work alongside your existing dev tools, with
           integrations planned as we progress through beta.
         </p>
         <div className="flex items-center justify-center gap-2">
           <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
           <span className="text-xs text-text-muted">
-            Core features available in free beta
+            Core review features available in free beta
           </span>
         </div>
       </motion.div>
