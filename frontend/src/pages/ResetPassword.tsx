@@ -72,14 +72,14 @@ export default function ResetPassword() {
       initial="hidden"
       whileInView="visible"
       viewport={viewportConfig}
-      className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-8 w-full max-w-sm mx-auto shadow-2xl"
+      className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-6 sm:p-8 w-full max-w-sm mx-4 sm:mx-auto shadow-2xl"
     >
       {done ? (
         <div className="text-center">
           <div className="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent mx-auto mb-4">
             <CheckCircle2 className="w-6 h-6" />
           </div>
-          <h2 className="text-xl font-bold text-text-primary mb-1">
+          <h2 className="text-lg sm:text-xl font-bold text-text-primary mb-1">
             Password updated
           </h2>
           <p className="text-sm text-text-muted">
@@ -88,7 +88,7 @@ export default function ResetPassword() {
         </div>
       ) : (
         <>
-          <h2 className="text-xl font-bold text-text-primary mb-1 text-center">
+          <h2 className="text-lg sm:text-xl font-bold text-text-primary mb-1 text-center">
             Set a new password
           </h2>
           <p className="text-sm text-text-muted mb-6 text-center">

@@ -56,7 +56,7 @@ export const hoverLift = {
   whileHover: { 
     y: -5,
     scale: 1.02,
-    transition: { duration: 0.2, ease: "easeOut" }
+    transition: { duration: 0.2, ease: "easeOut" } as Transition
   },
   whileTap: { scale: 0.98 }
 };

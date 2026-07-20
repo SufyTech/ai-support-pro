@@ -29,7 +29,7 @@ const steps = [
 export default function HowItWorks() {
   return (
     <section
-      className="py-32 px-6 md:px-12 max-w-7xl mx-auto"
+      className="py-20 sm:py-24 md:py-32 px-6 sm:px-8 md:px-12 max-w-7xl mx-auto"
       id="how-it-works"
     >
       <motion.div
@@ -37,7 +37,7 @@ export default function HowItWorks() {
         initial="hidden"
         whileInView="visible"
         viewport={viewportConfig}
-        className="mb-24 text-left md:flex items-end justify-between gap-12"
+        className="mb-16 sm:mb-20 md:mb-24 text-left md:flex items-end justify-between gap-12"
       >
         <div className="max-w-2xl">
           <span className="text-xs uppercase tracking-[0.3em] text-accent font-bold block mb-4">
@@ -59,7 +59,7 @@ export default function HowItWorks() {
         initial="hidden"
         whileInView="visible"
         viewport={viewportConfig}
-        className="grid grid-cols-1 md:grid-cols-3 gap-16 relative"
+        className="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-12 md:gap-16 relative"
       >
         <div className="hidden md:block absolute top-[2.2rem] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-border-soft to-transparent -z-10" />
 

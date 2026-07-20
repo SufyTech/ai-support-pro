@@ -99,7 +99,7 @@ export default function Login() {
       initial="hidden"
       whileInView="visible"
       viewport={viewportConfig}
-      className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-8 w-full max-w-sm mx-auto shadow-2xl"
+      className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-6 sm:p-8 w-full max-w-sm mx-auto shadow-2xl"
     >
       {/* Brand mark */}
       <div className="flex flex-col items-center text-center mb-8">

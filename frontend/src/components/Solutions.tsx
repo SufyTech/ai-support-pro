@@ -31,7 +31,11 @@ const solutions = [
     icon: MessageSquareCode,
     color: "#22d3a0",
     stat: "Style-guide grounded",
-    features: ["Approve / Request changes / Comment", "Context-aware", "No generic feedback"],
+    features: [
+      "Approve / Request changes / Comment",
+      "Context-aware",
+      "No generic feedback",
+    ],
   },
   {
     title: "Escalation Routing",
@@ -40,7 +44,11 @@ const solutions = [
     icon: ShieldAlert,
     color: "#c1c1ff",
     stat: "Zero-config escalation",
-    features: ["Auth & payment detection", "Migration flagging", "Mandatory human gate"],
+    features: [
+      "Auth & payment detection",
+      "Migration flagging",
+      "Mandatory human gate",
+    ],
   },
   {
     title: "Review Analytics",
@@ -55,22 +63,25 @@ const solutions = [
 
 export default function Solutions() {
   return (
-    <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto" id="solutions">
+    <section
+      className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto"
+      id="solutions"
+    >
       <motion.div
         variants={fadeInUp}
         initial="hidden"
         whileInView="visible"
         viewport={viewportConfig}
-        className="mb-24 text-center"
+        className="mb-16 sm:mb-20 md:mb-24 text-center"
       >
         <span className="text-xs uppercase tracking-[0.3em] text-accent font-bold block mb-4">
           Complete Platform
         </span>
-        <h2 className="font-display text-4xl md:text-6xl font-bold mb-6 tracking-tight">
+        <h2 className="font-display text-3xl sm:text-4xl md:text-6xl font-bold mb-6 tracking-tight">
           Everything your review process
           <br className="hidden md:block" /> needs, automated.
         </h2>
-        <p className="text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
+        <p className="text-base sm:text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed px-2">
           A modular architecture designed to handle every stage of the code
           review lifecycle with AI-powered intelligence.
         </p>
@@ -81,7 +92,7 @@ export default function Solutions() {
         initial="hidden"
         whileInView="visible"
         viewport={viewportConfig}
-        className="grid grid-cols-1 md:grid-cols-2 gap-8"
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8"
       >
         {solutions.map((solution, index) => (
           <motion.div
@@ -90,7 +101,7 @@ export default function Solutions() {
             {...hoverLift}
             whileHover={{ y: -8 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="gradient-card border border-border rounded-3xl p-10 hover:border-accent/50 transition-all duration-500 group shadow-lg hover:shadow-[0_20px_60px_rgba(108,108,255,0.2)] relative overflow-hidden"
+            className="gradient-card border border-border rounded-3xl p-6 sm:p-8 md:p-10 hover:border-accent/50 transition-all duration-500 group shadow-lg hover:shadow-[0_20px_60px_rgba(108,108,255,0.2)] relative overflow-hidden"
           >
             {/* Gradient Background Effect */}
             <div
@@ -101,8 +112,8 @@ export default function Solutions() {
             />
 
             {/* Number Badge */}
-            <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-surface/50 border border-border-soft flex items-center justify-center opacity-30 group-hover:opacity-60 transition-opacity">
-              <span className="text-sm font-bold text-text-muted">
+            <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-surface/50 border border-border-soft flex items-center justify-center opacity-30 group-hover:opacity-60 transition-opacity">
+              <span className="text-xs sm:text-sm font-bold text-text-muted">
                 {(index + 1).toString().padStart(2, "0")}
               </span>
             </div>
@@ -111,14 +122,14 @@ export default function Solutions() {
             <motion.div
               whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
               transition={{ duration: 0.5 }}
-              className="relative w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-8 group-hover:bg-accent group-hover:text-white transition-all duration-500 shadow-lg group-hover:shadow-xl"
+              className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-6 sm:mb-8 group-hover:bg-accent group-hover:text-white transition-all duration-500 shadow-lg group-hover:shadow-xl"
               style={
                 {
                   "--hover-shadow": `0 20px 40px ${solution.color}40`,
                 } as React.CSSProperties
               }
             >
-              <solution.icon className="w-8 h-8 relative z-10" />
+              <solution.icon className="w-7 h-7 sm:w-8 sm:h-8 relative z-10" />
 
               {/* Pulse Ring */}
               <motion.div
@@ -132,8 +143,8 @@ export default function Solutions() {
 
             {/* Content */}
             <div className="relative z-10 space-y-4">
-              <div className="flex items-start justify-between gap-4">
-                <h3 className="font-display text-2xl font-bold text-text-primary group-hover:text-accent transition-colors">
+              <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4 pr-8 sm:pr-0">
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-text-primary group-hover:text-accent transition-colors">
                   {solution.title}
                 </h3>
 
@@ -157,7 +168,7 @@ export default function Solutions() {
                     key={feature}
                     className="flex items-center gap-2 text-sm text-text-muted group-hover:text-text-secondary transition-colors"
                   >
-                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
                     <span>{feature}</span>
                   </div>
                 ))}
@@ -183,11 +194,11 @@ export default function Solutions() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={viewportConfig}
         transition={{ delay: 0.8 }}
-        className="mt-16 text-center"
+        className="mt-12 sm:mt-16 text-center px-2"
       >
         <p className="text-sm text-text-muted mb-4">
-          Designed to work alongside your existing dev tools, with
-          integrations planned as we progress through beta.
+          Designed to work alongside your existing dev tools, with integrations
+          planned as we progress through beta.
         </p>
         <div className="flex items-center justify-center gap-2">
           <div className="w-2 h-2 rounded-full bg-success animate-pulse" />

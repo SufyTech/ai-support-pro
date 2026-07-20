@@ -38,7 +38,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="w-full bg-void border-t border-border-soft pt-24 pb-12 overflow-hidden relative">
+    <footer className="w-full bg-void border-t border-border-soft pt-16 sm:pt-20 md:pt-24 pb-12 overflow-hidden relative">
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent pointer-events-none" />
 
@@ -47,12 +47,12 @@ export default function Footer() {
         initial="hidden"
         whileInView="visible"
         viewport={viewportConfig}
-        className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-12 mb-20 relative z-10"
+        className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 md:gap-12 mb-20 relative z-10"
       >
         {/* Brand Section */}
         <motion.div variants={fadeInUp} className="col-span-2 md:col-span-1">
           <div className="font-display text-2xl font-bold text-text-primary mb-4">
-            AI CodeReview {" "}
+            AI CodeReview{" "}
             <span className="text-accent underline decoration-accent/30 underline-offset-4">
               Pro
             </span>
@@ -166,7 +166,7 @@ export default function Footer() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={viewportConfig}
-        className="max-w-7xl mx-auto px-6 md:px-12 pt-12 border-t border-border-soft flex flex-col md:flex-row justify-between items-center gap-6 relative z-10"
+        className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 pt-12 border-t border-border-soft flex flex-col md:flex-row justify-between items-center gap-6 relative z-10"
       >
         <div className="flex flex-col md:flex-row items-center gap-4">
           <p className="text-[11px] font-bold text-text-muted uppercase tracking-[0.3em]">
@@ -208,7 +208,7 @@ export default function Footer() {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={viewportConfig}
-        className="max-w-7xl mx-auto px-6 md:px-12 mt-8 flex justify-center relative z-10"
+        className="max-w-7xl mx-auto px-6 sm:px-8 md:px-12 mt-8 flex justify-center relative z-10"
       >
         <div className="flex items-center gap-2 px-4 py-2 bg-surface/30 border border-border-soft rounded-full">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />

@@ -39,53 +39,56 @@ export default function Contact() {
   ];
 
   return (
-    <section id="contact" className="relative py-24 overflow-hidden">
+    <section
+      id="contact"
+      className="relative py-16 sm:py-20 md:py-24 overflow-hidden"
+    >
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-surface/20 via-accent/5 to-surface/20" />
 
-      <div className="relative max-w-7xl mx-auto px-6 md:px-12">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={viewportConfig}
-          className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+          className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center"
         >
           {/* Left: Social Proof + Benefits */}
           <motion.div variants={fadeInUp}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full mb-4 sm:mb-6">
               <Sparkles className="w-4 h-4 text-accent" />
               <span className="text-xs font-bold text-accent uppercase tracking-wider">
                 Enterprise Ready
               </span>
             </div>
 
-            <h2 className="text-4xl md:text-5xl font-display font-black mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black mb-4 sm:mb-6 leading-tight">
               Ready to automate
               <br />
               <span className="text-gradient">your code reviews?</span>
             </h2>
 
-            <p className="text-lg text-text-muted mb-8">
-              Try AI Code Review Bot and see how multi-agent AI can review PRs
+            <p className="text-base sm:text-lg text-text-muted mb-6 sm:mb-8">
+              Try AI CodeReview Pro and see how multi-agent AI can review PRs
               faster and reduce your team's review workload automatically.
             </p>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
               {stats.map((stat, i) => (
                 <motion.div
                   key={stat.label}
                   variants={fadeInUp}
                   className="text-center"
                 >
-                  <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <stat.icon className="w-6 h-6 text-accent" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-accent/10 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                    <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
                   </div>
-                  <div className="text-2xl font-bold text-text-primary mb-1">
+                  <div className="text-lg sm:text-2xl font-bold text-text-primary mb-1">
                     {stat.value}
                   </div>
-                  <div className="text-xs text-text-muted uppercase tracking-wider">
+                  <div className="text-[10px] sm:text-xs text-text-muted uppercase tracking-wider">
                     {stat.label}
                   </div>
                 </motion.div>
@@ -105,11 +108,11 @@ export default function Contact() {
 
           {/* Right: CTA Card */}
           <motion.div variants={fadeInUp}>
-            <div className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-8 shadow-2xl">
-              <h3 className="text-2xl font-bold text-text-primary mb-2">
+            <div className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-5 sm:p-8 shadow-2xl">
+              <h3 className="text-xl sm:text-2xl font-bold text-text-primary mb-2">
                 Schedule a Demo
               </h3>
-              <p className="text-text-muted mb-6">
+              <p className="text-sm sm:text-base text-text-muted mb-6">
                 See AI Code Review Bot in action. Get a personalized walkthrough
                 tailored to your team's needs.
               </p>
@@ -179,7 +182,7 @@ export default function Contact() {
 
               {/* Trust Badges */}
               <div className="mt-6 pt-6 border-t border-border-soft">
-                <div className="flex items-center justify-center gap-4 text-xs text-text-muted">
+                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-text-muted">
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3 text-accent" />
                     Free Beta

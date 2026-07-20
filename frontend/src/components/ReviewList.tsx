@@ -17,7 +17,6 @@ import {
 interface ReviewListProps {
   reviews: Review[];
   loading: boolean;
-  
 }
 
 export default function ReviewList({ reviews, loading }: ReviewListProps) {
@@ -78,9 +77,12 @@ export default function ReviewList({ reviews, loading }: ReviewListProps) {
 
   if (loading) {
     return (
-      <section id="review-list" className="py-24 bg-surface/20">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <h2 className="text-3xl md:text-4xl font-display font-black text-center mb-12">
+      <section
+        id="review-list"
+        className="py-16 sm:py-20 md:py-24 bg-surface/20"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-center mb-12">
             Live Review Stream
           </h2>
           <div className="space-y-4">
@@ -111,17 +113,20 @@ export default function ReviewList({ reviews, loading }: ReviewListProps) {
 
   if (reviews.length === 0) {
     return (
-      <section id="review-list" className="py-24 bg-surface/10">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <section
+        id="review-list"
+        className="py-16 sm:py-20 md:py-24 bg-surface/10"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-16 px-8 bg-surface/20 border border-border-soft rounded-3xl"
+            className="text-center py-12 sm:py-16 px-6 sm:px-8 bg-surface/20 border border-border-soft rounded-3xl"
           >
-            <div className="w-20 h-20 mx-auto mb-6 bg-accent/10 rounded-full flex items-center justify-center">
-              <MessageSquare className="w-10 h-10 text-accent" />
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 bg-accent/10 rounded-full flex items-center justify-center">
+              <MessageSquare className="w-8 h-8 sm:w-10 sm:h-10 text-accent" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-display font-black mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black mb-4">
               Ready for Action
             </h2>
             <p className="text-text-secondary max-w-md mx-auto leading-relaxed">
@@ -135,16 +140,16 @@ export default function ReviewList({ reviews, loading }: ReviewListProps) {
   }
 
   return (
-    <section id="review-list" className="py-24 bg-surface/10">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+    <section id="review-list" className="py-16 sm:py-20 md:py-24 bg-surface/10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportConfig}
           className="mb-12"
         >
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-3xl md:text-4xl font-display font-black">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black">
               Live Review Stream
             </h2>
             <div className="flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full">
@@ -194,7 +199,7 @@ export default function ReviewList({ reviews, loading }: ReviewListProps) {
                   boxShadow: { duration: 2, repeat: index === 0 ? 2 : 0 },
                 }}
                 whileHover={{ scale: 1.01, y: -2 }}
-                className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-6 hover:border-accent/30 transition-all group shadow-lg hover:shadow-[0_10px_40px_rgba(108,108,255,0.15)] relative overflow-hidden"
+                className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-4 sm:p-6 hover:border-accent/30 transition-all group shadow-lg hover:shadow-[0_10px_40px_rgba(108,108,255,0.15)] relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
@@ -209,10 +214,10 @@ export default function ReviewList({ reviews, loading }: ReviewListProps) {
                   </motion.div>
                 )}
 
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 relative z-10">
-                  <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-3 mb-3">
-                      <h3 className="font-display font-bold text-xl text-text-primary group-hover:text-accent transition-colors">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 relative z-10 pt-6 md:pt-0">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3">
+                      <h3 className="font-display font-bold text-lg sm:text-xl text-text-primary group-hover:text-accent transition-colors break-words">
                         {(review as any).pr_title}
                       </h3>
 
@@ -249,7 +254,7 @@ export default function ReviewList({ reviews, loading }: ReviewListProps) {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         transition={{ delay: 0.3 }}
-                        className="mt-4 p-5 bg-surface/40 rounded-xl border border-accent/20 relative overflow-hidden group/reply"
+                        className="mt-4 p-4 sm:p-5 bg-surface/40 rounded-xl border border-accent/20 relative overflow-hidden group/reply"
                       >
                         <motion.div
                           animate={{ x: ["-100%", "100%"] }}

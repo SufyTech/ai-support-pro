@@ -71,21 +71,24 @@ export default function Pricing() {
 
   return (
     <>
-      <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto" id="pricing">
+      <section
+        className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto"
+        id="pricing"
+      >
         <motion.div
           variants={fadeInUp}
           initial="hidden"
           whileInView="visible"
           viewport={viewportConfig}
-          className="mb-24 text-center"
+          className="mb-16 sm:mb-20 md:mb-24 text-center"
         >
           <span className="text-xs uppercase tracking-[0.3em] text-accent font-bold block mb-4">
             Pricing Plans
           </span>
-          <h2 className="font-display text-4xl md:text-6xl font-bold mb-6 tracking-tight">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-6xl font-bold mb-6 tracking-tight">
             Scale your reviews, not your costs.
           </h2>
-          <p className="text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed px-2">
             Predictable pricing for high-performance engineering teams.
           </p>
         </motion.div>
@@ -95,16 +98,16 @@ export default function Pricing() {
           initial="hidden"
           whileInView="visible"
           viewport={viewportConfig}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-start"
         >
           {plans.map((plan) => (
             <motion.div
               key={plan.name}
               variants={fadeInUp}
               {...hoverLift}
-              className={`relative p-10 rounded-3xl border transition-all duration-500 overflow-hidden group ${
+              className={`relative p-6 sm:p-8 lg:p-10 rounded-3xl border transition-all duration-500 overflow-hidden group ${
                 plan.popular
-                  ? "bg-gradient-card border-accent shadow-[0_20px_50px_rgba(108,108,255,0.15)] lg:scale-105 z-10"
+                  ? "bg-gradient-card border-accent shadow-[0_20px_50px_rgba(108,108,255,0.15)] md:col-span-2 lg:col-span-1 lg:scale-105 z-10"
                   : "bg-surface/40 border-border hover:border-accent/30"
               }`}
             >
@@ -121,15 +124,15 @@ export default function Pricing() {
               )}
 
               {plan.popular && (
-                <div className="absolute top-0 right-0 p-4">
+                <div className="absolute top-0 right-0 p-3 sm:p-4">
                   <span className="bg-accent text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full animate-pulse">
                     Most Popular
                   </span>
                 </div>
               )}
 
-              <div className="mb-8 relative z-10">
-                <h3 className="font-display text-2xl font-bold mb-2 text-text-primary group-hover:text-accent transition-colors">
+              <div className="mb-6 sm:mb-8 relative z-10">
+                <h3 className="font-display text-xl sm:text-2xl font-bold mb-2 text-text-primary group-hover:text-accent transition-colors">
                   {plan.name}
                 </h3>
                 <p className="text-sm text-text-muted font-medium">
@@ -137,8 +140,8 @@ export default function Pricing() {
                 </p>
               </div>
 
-              <div className="mb-10 relative z-10">
-                <span className="text-5xl font-black text-text-primary tracking-tighter">
+              <div className="mb-8 sm:mb-10 relative z-10">
+                <span className="text-4xl sm:text-5xl font-black text-text-primary tracking-tighter">
                   {plan.price}
                 </span>
                 {plan.price !== "Custom" && (
@@ -146,7 +149,7 @@ export default function Pricing() {
                 )}
               </div>
 
-              <ul className="space-y-4 mb-12 relative z-10">
+              <ul className="space-y-3 sm:space-y-4 mb-10 sm:mb-12 relative z-10">
                 {plan.features.map((feature) => (
                   <li
                     key={feature}
@@ -183,7 +186,7 @@ export default function Pricing() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-void/80 backdrop-blur-sm z-50 flex items-center justify-center px-6"
+          className="fixed inset-0 bg-void/80 backdrop-blur-sm z-50 flex items-center justify-center px-4 sm:px-6"
           onClick={() => setShowModal(false)}
         >
           <motion.div
@@ -191,7 +194,7 @@ export default function Pricing() {
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.8, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="bg-gradient-card border border-accent rounded-2xl p-8 max-w-md w-full shadow-[0_20px_60px_rgba(108,108,255,0.3)] relative"
+            className="bg-gradient-card border border-accent rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-[0_20px_60px_rgba(108,108,255,0.3)] relative max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Success Icon */}
@@ -199,13 +202,13 @@ export default function Pricing() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="w-16 h-16 mx-auto mb-6 bg-accent/20 rounded-full flex items-center justify-center"
+              className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-6 bg-accent/20 rounded-full flex items-center justify-center"
             >
-              <CheckCircle2 className="w-10 h-10 text-accent" />
+              <CheckCircle2 className="w-9 h-9 sm:w-10 sm:h-10 text-accent" />
             </motion.div>
 
             {/* Title */}
-            <h3 className="font-display text-2xl font-bold text-center text-text-primary mb-3">
+            <h3 className="font-display text-xl sm:text-2xl font-bold text-center text-text-primary mb-3">
               Plan Selected!
             </h3>
 

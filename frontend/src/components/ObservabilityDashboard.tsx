@@ -262,6 +262,7 @@ export default function ObservabilityDashboard({
         }
         @media(max-width:480px){
           .dash-grid-4{grid-template-columns:1fr!important}
+          .stat-card,.chart-card{padding:18px 16px!important}
         }
       `}</style>
 
@@ -271,6 +272,7 @@ export default function ObservabilityDashboard({
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-end",
+          flexWrap: "wrap",
           gap: 10,
           marginBottom: 20,
         }}

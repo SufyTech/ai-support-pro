@@ -41,6 +41,14 @@ export default function DashboardPage() {
     });
   }, []);
 
+  // Default the sidebar to closed on small screens so it doesn't push
+  // content off-canvas on first load.
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, []);
+
   const handleReviewCreated = (newReview: Review) => {
     setReviews((prev) => [newReview, ...prev]);
     refreshStats();
@@ -69,19 +77,27 @@ export default function DashboardPage() {
 
   return (
     <div className="flex min-h-screen pt-0 bg-void">
+      {/* Mobile backdrop — only shown when sidebar is open on small screens */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <div
-        className={`fixed top-0 bottom-0 left-0 transition-all duration-300 ease-in-out overflow-hidden border-r border-border-soft bg-surface/30 backdrop-blur-md ${
+        className={`fixed top-0 bottom-0 left-0 z-40 transition-all duration-300 ease-in-out overflow-hidden border-r border-border-soft bg-surface/30 backdrop-blur-md ${
           isSidebarOpen ? "w-64" : "w-0"
         }`}
       >
         <div className="w-64 h-full flex flex-col p-4">
           {/* Brand */}
           <div className="flex items-center gap-2.5 px-2 py-2 mb-8">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-accent/20">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-accent/20 shrink-0">
               A
             </div>
-            <span className="text-sm font-bold text-text-primary tracking-tight">
+            <span className="text-sm font-bold text-text-primary tracking-tight truncate">
               AI Code Review Bot
             </span>
           </div>
@@ -98,7 +114,12 @@ export default function DashboardPage() {
               return (
                 <button
                   key={id}
-                  onClick={() => setView(id)}
+                  onClick={() => {
+                    setView(id);
+                    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                      setIsSidebarOpen(false);
+                    }
+                  }}
                   className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                     isActive
                       ? "bg-accent/10 text-accent"
@@ -117,7 +138,7 @@ export default function DashboardPage() {
                     />
                   )}
                   <Icon className="w-4 h-4 shrink-0" />
-                  {label}
+                  <span className="truncate">{label}</span>
                 </button>
               );
             })}
@@ -137,7 +158,7 @@ export default function DashboardPage() {
               onClick={() => setIsSignOutOpen(true)}
               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-text-secondary hover:bg-red-500/10 hover:text-red-400 transition-all"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-4 h-4 shrink-0" />
               Sign Out
             </button>
           </div>
@@ -146,15 +167,15 @@ export default function DashboardPage() {
 
       {/* Main area */}
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${
-          isSidebarOpen ? "ml-64" : "ml-0"
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out ${
+          isSidebarOpen ? "lg:ml-64" : "ml-0"
         }`}
       >
         {/* Top bar */}
-        <div className="h-14 border-b border-border-soft flex items-center px-6 gap-3 bg-void/60 backdrop-blur-md sticky top-0 z-10">
+        <div className="h-14 border-b border-border-soft flex items-center px-3 sm:px-6 gap-2 sm:gap-3 bg-void/60 backdrop-blur-md sticky top-0 z-20">
           <button
             onClick={() => setIsSidebarOpen((prev) => !prev)}
-            className="p-1.5 rounded-md text-text-secondary hover:bg-surface/50 hover:text-text-primary transition-colors"
+            className="p-1.5 rounded-md text-text-secondary hover:bg-surface/50 hover:text-text-primary transition-colors shrink-0"
           >
             {isSidebarOpen ? (
               <PanelLeftClose className="w-[18px] h-[18px]" />
@@ -162,14 +183,14 @@ export default function DashboardPage() {
               <PanelLeftOpen className="w-[18px] h-[18px]" />
             )}
           </button>
-          <div className="text-sm text-text-secondary">
-            Dashboard <span className="mx-1.5">/</span>
+          <div className="text-xs sm:text-sm text-text-secondary truncate">
+            Dashboard <span className="mx-1 sm:mx-1.5">/</span>
             <span className="text-text-primary font-medium">{activeLabel}</span>
           </div>
         </div>
 
         {/* Page content */}
-        <div className="p-8 max-w-[1500px] mx-auto w-full">
+        <div className="p-4 sm:p-6 lg:p-8 max-w-[1500px] mx-auto w-full">
           <AnimatePresence mode="wait">
             {view === "overview" && (
               <motion.div
@@ -178,11 +199,11 @@ export default function DashboardPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <h1 className="text-2xl font-bold text-text-primary mb-6">
+                <h1 className="text-xl sm:text-2xl font-bold text-text-primary mb-4 sm:mb-6">
                   Overview
                 </h1>
                 <KnowledgeSearch />
-                <div className="mt-8">
+                <div className="mt-6 sm:mt-8">
                   <ReviewList reviews={reviews} loading={reviewsLoading} />
                 </div>
               </motion.div>
@@ -195,7 +216,7 @@ export default function DashboardPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <h1 className="text-2xl font-bold text-text-primary mb-6">
+                <h1 className="text-xl sm:text-2xl font-bold text-text-primary mb-4 sm:mb-6">
                   New Review
                 </h1>
                 <AIDispatcher onReviewCreated={handleReviewCreated} />
@@ -209,7 +230,7 @@ export default function DashboardPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <h1 className="text-2xl font-bold text-text-primary mb-6">
+                <h1 className="text-xl sm:text-2xl font-bold text-text-primary mb-4 sm:mb-6">
                   Analytics
                 </h1>
                 <ObservabilityDashboard onClose={() => setView("overview")} />
@@ -238,7 +259,7 @@ export default function DashboardPage() {
               exit={{ opacity: 0, y: 8, scale: 0.97 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-7 w-full max-w-sm shadow-2xl relative"
+              className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-5 sm:p-7 w-full max-w-sm shadow-2xl relative"
             >
               {!isSigningOut && (
                 <button

@@ -89,25 +89,25 @@ export default function AIDispatcher({ onReviewCreated }: AIDispatcherProps) {
   return (
     <section
       id="demo"
-      className="py-24 bg-surface/20 border-y border-border-soft"
+      className="py-16 sm:py-20 md:py-24 bg-surface/20 border-y border-border-soft"
     >
-      <div className="max-w-4xl mx-auto px-6 md:px-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportConfig}
-          className="text-center mb-12"
+          className="text-center mb-10 sm:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full mb-4 sm:mb-6">
             <Sparkles className="w-4 h-4 text-accent" />
             <span className="text-xs font-bold text-accent uppercase tracking-wider">
               AI Code Review Dispatcher
             </span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-display font-black mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black mb-3 sm:mb-4">
             Test our AI agents in real-time
           </h2>
-          <p className="text-text-muted max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-text-muted max-w-2xl mx-auto px-2 sm:px-0">
             Submit a PR title and code diff, and watch our AI agents
             automatically triage risk, review the change, and generate a verdict
             in milliseconds.
@@ -120,18 +120,18 @@ export default function AIDispatcher({ onReviewCreated }: AIDispatcherProps) {
           initial="hidden"
           whileInView="visible"
           viewport={viewportConfig}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
           <p className="text-sm font-bold text-text-muted mb-3 uppercase tracking-wider">
             Quick Test Scenarios
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             {quickScenarios.map((scenario) => (
               <button
                 key={scenario.label}
                 onClick={() => handleQuickTest(scenario)}
                 disabled={loading}
-                className="px-4 py-2 bg-surface/40 hover:bg-surface/60 border border-border-soft hover:border-accent/30 rounded-lg text-sm font-medium text-text-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-3 sm:px-4 py-2 bg-surface/40 hover:bg-surface/60 border border-border-soft hover:border-accent/30 rounded-lg text-sm font-medium text-text-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 <span>{scenario.icon}</span>
                 {scenario.label}
@@ -147,9 +147,9 @@ export default function AIDispatcher({ onReviewCreated }: AIDispatcherProps) {
           whileInView="visible"
           viewport={viewportConfig}
           onSubmit={handleSubmit}
-          className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-8 shadow-xl"
+          className="bg-gradient-card backdrop-blur-sm border border-border-soft rounded-2xl p-5 sm:p-8 shadow-xl"
         >
-          <div className="space-y-6">
+          <div className="space-y-5 sm:space-y-6">
             {/* PR Title Input */}
             <div>
               <label
@@ -242,7 +242,7 @@ export default function AIDispatcher({ onReviewCreated }: AIDispatcherProps) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="mt-8 bg-gradient-card backdrop-blur-sm border border-accent/30 rounded-2xl p-8 shadow-xl relative overflow-hidden"
+              className="mt-6 sm:mt-8 bg-gradient-card backdrop-blur-sm border border-accent/30 rounded-2xl p-5 sm:p-8 shadow-xl relative overflow-hidden"
             >
               <motion.div
                 animate={{ x: ["-100%", "100%"] }}
@@ -251,12 +251,12 @@ export default function AIDispatcher({ onReviewCreated }: AIDispatcherProps) {
               />
 
               <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
-                    <CheckCircle2 className="w-6 h-6 text-green-400" />
+                <div className="flex items-center gap-3 mb-5 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-text-primary">
+                    <h3 className="text-base sm:text-lg font-bold text-text-primary">
                       AI Review Complete
                     </h3>
                     <p className="text-sm text-text-muted">
@@ -265,7 +265,7 @@ export default function AIDispatcher({ onReviewCreated }: AIDispatcherProps) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-5 sm:mb-6">
                   <div className="bg-surface/40 rounded-lg p-4">
                     <p className="text-xs text-text-muted mb-1 uppercase tracking-wider font-bold">
                       PR Title
@@ -301,7 +301,7 @@ export default function AIDispatcher({ onReviewCreated }: AIDispatcherProps) {
                 </div>
 
                 {(result as any).reviewComment && (
-                  <div className="bg-accent/10 border border-accent/20 rounded-lg p-6">
+                  <div className="bg-accent/10 border border-accent/20 rounded-lg p-4 sm:p-6">
                     <div className="flex items-center gap-2 mb-3">
                       <Sparkles className="w-4 h-4 text-accent" />
                       <p className="text-xs font-bold text-accent uppercase tracking-wider">

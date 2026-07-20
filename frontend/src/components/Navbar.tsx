@@ -47,7 +47,7 @@ export default function Navbar({ onLoginClick, isLoggedIn }: NavbarProps) {
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`fixed top-0 w-full z-50 h-16 flex justify-between items-center px-6 md:px-12 border-b transition-all duration-300 ${
+        className={`fixed top-0 w-full z-50 h-16 flex justify-between items-center px-6 sm:px-8 md:px-12 border-b transition-all duration-300 ${
           isScrolled
             ? "border-border-soft bg-void/80 backdrop-blur-md"
             : "border-transparent bg-transparent"
