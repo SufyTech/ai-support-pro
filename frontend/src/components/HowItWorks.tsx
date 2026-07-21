@@ -8,21 +8,21 @@ import {
 const steps = [
   {
     number: "01",
-    title: "Connect Your Repo",
+    title: "Authenticate",
     description:
-      "Connect AI CodeReview Pro alongside your existing dev tools today, with deeper CI/CD integrations planned as we progress through beta.",
+      "Sign in securely via Google, GitHub, or email — your dashboard is provisioned instantly, with zero configuration required.",
   },
   {
     number: "02",
-    title: "Train Your Agents",
+    title: "Submit a Pull Request",
     description:
-      "Our AI scans your style guide and security checklist to learn your team's actual standards.",
+      "Provide a PR title and diff, or launch one of the pre-built scenarios to see the multi-agent pipeline handle real-world code changes end to end.",
   },
   {
     number: "03",
-    title: "Go Live",
+    title: "Observe the Review Pipeline",
     description:
-      "Agents begin triaging PRs and drafting review comments immediately, scaling with your volume.",
+      "Track triage, risk classification, and review generation in real time. Changes touching auth, payments, or migrations are automatically escalated for human sign-off.",
   },
 ];
 
@@ -44,13 +44,13 @@ export default function HowItWorks() {
             The Process
           </span>
           <h2 className="font-display text-4xl md:text-6xl font-bold tracking-tight">
-            Seamless integration,
-            <br /> instant results.
+            Sign in, submit a PR,
+            <br /> see it reviewed live.
           </h2>
         </div>
         <p className="text-lg text-text-secondary max-w-sm mt-6 md:mt-0">
-          We designed AI Code Review Bot to work with your current tools, not
-          replace them.
+          A fully working multi-agent system — authenticate and watch your first
+          review happen in real time.
         </p>
       </motion.div>
 
