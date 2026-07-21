@@ -135,8 +135,8 @@ export default function Navbar({ onLoginClick, isLoggedIn }: NavbarProps) {
           </button>
 
           <motion.button
-            aria-label="View live demo"
-            onClick={() => scrollToId("demo")}
+            aria-label="Get started"
+            onClick={onLoginClick}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             className="bg-accent text-white rounded-full px-6 py-2.5 text-sm font-semibold hover:brightness-110 hover:shadow-[0_0_30px_rgba(108,108,255,0.3)] transition-all cursor-pointer"
@@ -219,7 +219,10 @@ export default function Navbar({ onLoginClick, isLoggedIn }: NavbarProps) {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.35 }}
-                  onClick={() => scrollToId("demo")}
+                  onClick={() => {
+                    onLoginClick?.();
+                    setIsMobileMenuOpen(false);
+                  }}
                   className="w-full bg-accent text-white rounded-xl px-6 py-4 font-bold hover:brightness-110 hover:shadow-[0_0_30px_rgba(108,108,255,0.3)] transition-all"
                 >
                   Try It Free
