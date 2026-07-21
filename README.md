@@ -1,4 +1,4 @@
-# AI Code Review Bot
+# AI CodeReview Pro
 
 **Autonomous multi-agent code review system built with LangGraph, RAG, and real-time observability.**
 
