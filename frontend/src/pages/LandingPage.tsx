@@ -18,13 +18,14 @@ export default function LandingPage({
   reviews,
   reviewsLoading,
   handleReviewCreated,
+  onGetStarted,
 }: LandingPageProps) {
   return (
     <>
       <Hero
         reviews={reviews}
         loading={reviewsLoading}
-        onGetStarted={() => {}}
+        onGetStarted={onGetStarted}
       />
       <SocialProof />
       <Solutions />
