@@ -52,7 +52,7 @@ app = FastAPI(
 )
 
 ALLOWED_ORIGINS = [
-    "https://ai-codereview-pro.vercel.app/",
+    "https://ai-codereview-pro.vercel.app",
     "http://localhost:5173",
 ]
 
