@@ -1,0 +1,11 @@
+PR title: Add batch processor
+
+diff --git a/app/batch.py b/app/batch.py
+--- a/app/batch.py
++++ b/app/batch.py
+@@ -0,0 +1,5 @@
++def process_all(items):
++    results = []
++    for i in range(len(items) + 1):
++        results.append(items[i].strip().lower())
++    return results

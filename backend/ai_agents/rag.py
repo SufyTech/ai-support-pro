@@ -66,12 +66,12 @@ def ingest_documents():
         chunks = chunk_text(content)
         vectors = list(embedder.embed(chunks))
 
-    for i, (chunk, vector) in enumerate(zip(chunks, vectors)):
-        points.append(PointStruct(
-        id=str(uuid.uuid4()),
-        vector=vector.tolist(),
-        payload={"text": chunk, "source": filename, "chunk_index": i}
-    ))
+        for i, (chunk, vector) in enumerate(zip(chunks, vectors)):
+                points.append(PointStruct(
+                id=str(uuid.uuid4()),
+                vector=vector.tolist(),
+                payload={"text": chunk, "source": filename, "chunk_index": i},
+                ))
 
     qdrant.upsert(collection_name=COLLECTION_NAME, points=points)
     print(f"[RAG] Ingested {len(points)} chunks from {len(md_files)} files.")
@@ -140,7 +140,7 @@ Question: {question}
 Answer based on the context above:"""
 
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="openai/gpt-oss-20b",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}

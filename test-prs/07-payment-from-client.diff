@@ -1,0 +1,11 @@
+PR title: Add checkout endpoint
+
+diff --git a/app/checkout.py b/app/checkout.py
+--- a/app/checkout.py
++++ b/app/checkout.py
+@@ -0,0 +1,5 @@
++@router.post("/checkout")
++def checkout(request: Request):
++    data = request.json()
++    amount = data["amount"]
++    return charge_card(data["card_token"], amount)

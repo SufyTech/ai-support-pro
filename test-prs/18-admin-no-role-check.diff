@@ -1,0 +1,10 @@
+PR title: Add admin export
+
+diff --git a/app/admin.py b/app/admin.py
+--- a/app/admin.py
++++ b/app/admin.py
+@@ -0,0 +1,4 @@
++@router.get("/admin/export-users")
++def export_users(user=Depends(get_current_user), db=Depends(get_db)):
++    rows = db.execute("SELECT * FROM users").fetchall()
++    return [dict(r) for r in rows]

@@ -1,0 +1,10 @@
+PR title: Add file download
+
+diff --git a/app/files.py b/app/files.py
+--- a/app/files.py
++++ b/app/files.py
+@@ -0,0 +1,4 @@
++@router.get("/download")
++def download(name: str):
++    with open("/var/data/uploads/" + name, "rb") as f:
++        return Response(f.read())

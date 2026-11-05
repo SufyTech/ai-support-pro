@@ -1,0 +1,13 @@
+PR title: Add visit counter
+
+diff --git a/app/stats.py b/app/stats.py
+--- a/app/stats.py
++++ b/app/stats.py
+@@ -0,0 +1,7 @@
++visits = 0
++
++def record_visit():
++    global visits
++    current = visits
++    time.sleep(0.001)
++    visits = current + 1

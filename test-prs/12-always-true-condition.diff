@@ -1,0 +1,10 @@
+PR title: Add admin check
+
+diff --git a/app/permissions.py b/app/permissions.py
+--- a/app/permissions.py
++++ b/app/permissions.py
+@@ -0,0 +1,4 @@
++def is_privileged(user):
++    if user.role == "admin" or "owner":
++        return True
++    return False

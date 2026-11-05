@@ -1,0 +1,13 @@
+PR title: Add retry for API calls
+
+diff --git a/app/retry.py b/app/retry.py
+--- a/app/retry.py
++++ b/app/retry.py
+@@ -0,0 +1,7 @@
++def call_with_retry(fn):
++    while True:
++        try:
++            return fn()
++        except ConnectionError:
++            time.sleep(1)
++            continue

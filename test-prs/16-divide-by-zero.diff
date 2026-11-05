@@ -1,0 +1,8 @@
+PR title: Add average score
+
+diff --git a/app/scores.py b/app/scores.py
+--- a/app/scores.py
++++ b/app/scores.py
+@@ -0,0 +1,2 @@
++def average_score(scores):
++    return sum(scores) / len(scores)

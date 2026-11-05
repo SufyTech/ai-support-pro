@@ -1,0 +1,12 @@
+PR title: Add slugify helper
+
+diff --git a/app/utils.py b/app/utils.py
+--- a/app/utils.py
++++ b/app/utils.py
+@@ -0,0 +1,6 @@
++import re
++
++def slugify(text: str) -> str:
++    text = text.strip().lower()
++    text = re.sub(r"[^a-z0-9]+", "-", text)
++    return text.strip("-")

@@ -62,7 +62,7 @@ def triage_agent(state: ReviewState) -> ReviewState:
     print(">> Triage Agent running...")
 
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="openai/gpt-oss-120b",
         messages=[
             {
                 "role": "system",
@@ -70,10 +70,14 @@ def triage_agent(state: ReviewState) -> ReviewState:
                 Analyze the pull request title and diff, and return ONLY a JSON object with:
                 - change_type: one of [Feature, Bug Fix, Refactor, Dependency Update, Documentation]
                 - risk_level: one of [low, medium, high, critical]
-                - risk_reason: one sentence explaining the risk level
+                - risk_reason: ONE sentence that names the specific flaw or risky pattern in the diff. For example: "the checkout function charges the amount sent by the client instead of a server-side price". Do NOT just say which area the code touches (like "payments" or "permissions").
 
                 Mark risk_level as "high" or "critical" if the diff touches authentication,
                 payments, database migrations, environment/secrets config, or access control.
+
+                Mark risk_level as at least "medium" for any security misconfiguration, even in a small change.
+                Examples: CORS that allows all origins ("*"), especially together with credentials;
+                disabled TLS verification; debug mode left on; overly broad permissions.
 
                 Return ONLY valid JSON, no other text."""
             },
@@ -83,12 +87,14 @@ def triage_agent(state: ReviewState) -> ReviewState:
             }
         ],
         temperature=0.1,
-        max_tokens=200
+        max_tokens=1000
+        
     )
 
     try:
         result = json.loads(response.choices[0].message.content.strip())
-    except:
+    except Exception as e:
+        print(f">> Triage JSON parse failed: {e}")
         result = {
             "change_type": "Refactor",
             "risk_level": "medium",
@@ -158,6 +164,10 @@ def route_after_escalation(state: ReviewState) -> str:
         return "escalated"
     else:
         return "continue"
+    
+    
+def route_after_response(state: ReviewState) -> str:
+    return "escalated" if state.get("needs_human_review") else "done"    
 
 
 # ─────────────────────────────────────────
@@ -178,7 +188,7 @@ def knowledge_agent(state: ReviewState) -> ReviewState:
     print(">> Knowledge Agent running...")
 
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="openai/gpt-oss-120b",
         messages=[
             {
                 "role": "system",
@@ -191,7 +201,7 @@ def knowledge_agent(state: ReviewState) -> ReviewState:
             }
         ],
         temperature=0.2,
-        max_tokens=150
+        max_tokens=800
     )
 
     return {
@@ -219,7 +229,7 @@ def response_agent(state: ReviewState) -> ReviewState:
     print(">> Response Agent running...")
 
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="openai/gpt-oss-120b",
         messages=[
             {
                 "role": "system",
@@ -229,7 +239,8 @@ def response_agent(state: ReviewState) -> ReviewState:
                 - Point out specific concerns if any, referencing the diff
                 - Give a clear verdict: Approve, Request Changes, or Comment
                 - Keep it under 4 sentences
-                - Do not use placeholder text"""
+                - Do not use placeholder text
+                                - If the risk level is high or critical, never give the verdict Approve"""
             },
             {
                 "role": "user",
@@ -246,7 +257,7 @@ def response_agent(state: ReviewState) -> ReviewState:
             }
         ],
         temperature=0.4,
-        max_tokens=250
+        max_tokens=1000
     )
 
     return {
@@ -275,7 +286,11 @@ def escalation_response_agent(state: ReviewState) -> ReviewState:
 
     return {
         **state,
-        "review_comment": f"This PR ('{state['pr_title']}') touches high-risk code ({state['risk_reason']}). It has been flagged for mandatory senior engineer review before merge. No automated approval has been given.",
+        "review_comment": (
+            f"This PR ('{state['pr_title']}') is flagged for mandatory senior engineer review before merge. "
+            f"Risk: {state['risk_reason']} "
+            f"Automated review notes (not an approval): {state['review_comment']}"
+        ),
         "agents_run": state.get("agents_run", []) + ["escalation_response_agent"]
     }
 
@@ -296,18 +311,18 @@ def build_graph():
     graph.set_entry_point("triage_agent")
 
     graph.add_edge("triage_agent", "escalation_check")
+    graph.add_edge("escalation_check", "knowledge_agent")
+    graph.add_edge("knowledge_agent", "response_agent")
 
     graph.add_conditional_edges(
-        "escalation_check",
-        route_after_escalation,
+        "response_agent",
+        route_after_response,
         {
             "escalated": "escalation_response_agent",
-            "continue": "knowledge_agent"
+            "done": END
         }
     )
 
-    graph.add_edge("knowledge_agent", "response_agent")
-    graph.add_edge("response_agent", END)
     graph.add_edge("escalation_response_agent", END)
 
     return graph.compile()

@@ -1,0 +1,11 @@
+PR title: Add charge wrapper
+
+diff --git a/app/billing.py b/app/billing.py
+--- a/app/billing.py
++++ b/app/billing.py
+@@ -0,0 +1,5 @@
++def safe_charge(customer, amount):
++    try:
++        charge(customer, amount)
++    except:
++        pass

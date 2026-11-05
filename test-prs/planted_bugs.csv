@@ -1,0 +1,21 @@
+pr,planted_bug
+01-sql-injection.diff,SQL injection
+02-hardcoded-api-key.diff,Hardcoded API key
+03-missing-auth-check.diff,Missing auth check on destructive endpoint
+04-off-by-one.diff,Off-by-one error (IndexError)
+05-null-not-handled.diff,None not handled (AttributeError)
+06-password-logged.diff,Password written to logs
+07-payment-from-client.diff,Price trusted from the client
+08-migration-drops-column.diff,Migration drops a column with live data
+09-path-traversal.diff,Path traversal (no input validation)
+10-infinite-loop.diff,Infinite loop (no retry limit)
+11-race-condition.diff,Race condition on shared counter
+12-always-true-condition.diff,Always-true condition (role check bypass)
+13-unclosed-connection.diff,Database connection never closed
+14-md5-hashing.diff,Weak password hashing (MD5)
+15-open-cors.diff,CORS open to all origins with credentials
+16-divide-by-zero.diff,Division by zero on empty list
+17-swallowed-exception.diff,Exception swallowed silently
+18-admin-no-role-check.diff,Admin endpoint with no role check
+19-secret-in-config.diff,Secrets committed in config file
+20-clean-no-bug.diff,"NONE (clean PR, should not be flagged)"

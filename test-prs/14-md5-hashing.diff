@@ -1,0 +1,10 @@
+PR title: Add password hashing
+
+diff --git a/app/security.py b/app/security.py
+--- a/app/security.py
++++ b/app/security.py
+@@ -0,0 +1,4 @@
++import hashlib
++
++def hash_password(password):
++    return hashlib.md5(password.encode()).hexdigest()

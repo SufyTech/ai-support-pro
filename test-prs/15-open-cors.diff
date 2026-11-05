@@ -1,0 +1,13 @@
+PR title: Enable CORS
+
+diff --git a/app/main.py b/app/main.py
+--- a/app/main.py
++++ b/app/main.py
+@@ -0,0 +1,7 @@
++app.add_middleware(
++    CORSMiddleware,
++    allow_origins=["*"],
++    allow_credentials=True,
++    allow_methods=["*"],
++    allow_headers=["*"],
++)

@@ -17,5 +17,9 @@ build/
 
 # OS
 .DS_Store
-Thumbs.dbbackend/reviews.db
+Thumbs.db
 backend/reviews.db
+
+backend/.venv/
+backend/.env
+test-prs/results.csv

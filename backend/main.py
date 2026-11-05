@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
@@ -51,21 +51,18 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+ALLOWED_ORIGINS = [
+    "https://ai-codereview-pro.vercel.app/",
+    "http://localhost:5173",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
-
-@app.middleware("http")
-async def add_cors_headers(request, call_next):
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "*"
-    response.headers["Access-Control-Allow-Headers"] = "*"
-    return response
 
 class ReviewCreate(BaseModel):
     pr_title: str
@@ -149,25 +146,22 @@ async def get_review_stats():
 
 @app.post("/api/reviews")
 async def create_review(review: ReviewCreate):
-    change_type = "Refactor"
-    risk_level = "medium"
-    review_comment = "Thank you for the PR. Our review system will process it shortly."
-    assigned_reviewer = "AI Reviewer"
-    needs_human_review = False
-    agents_run = []
-
     try:
         from ai_agents.graph import dispatch
         ai_response = dispatch(pr_title=review.pr_title, code_diff=review.code_diff)
-        change_type = ai_response.get("change_type", change_type)
-        risk_level = ai_response.get("risk_level", risk_level)
-        review_comment = ai_response.get("reviewComment", review_comment)
-        assigned_reviewer = ai_response.get("assigned_reviewer", assigned_reviewer)
-        needs_human_review = ai_response.get("needs_human_review", False)
-        agents_run = ai_response.get("agents_run", [])
     except Exception as e:
-        print(f"AI dispatch failed, using fallback: {e}")
+        print(f"AI dispatch failed: {e}")
+        raise HTTPException(
+            status_code=503,
+            detail="AI review failed. Please try again in a moment.",
+        )
 
+    change_type = ai_response.get("change_type", "Refactor")
+    risk_level = ai_response.get("risk_level", "medium")
+    review_comment = ai_response.get("reviewComment", "")
+    assigned_reviewer = ai_response.get("assigned_reviewer", "AI Reviewer")
+    needs_human_review = ai_response.get("needs_human_review", False)
+    agents_run = ai_response.get("agents_run", [])
     review_id = f"PR-{datetime.now().strftime('%Y%m%d%H%M%S')}"
     created_at = datetime.now().isoformat() + "Z"
 

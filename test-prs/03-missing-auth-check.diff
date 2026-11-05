@@ -1,0 +1,11 @@
+PR title: Add delete user endpoint
+
+diff --git a/app/routes.py b/app/routes.py
+--- a/app/routes.py
++++ b/app/routes.py
+@@ -0,0 +1,5 @@
++@router.delete("/users/{user_id}")
++def delete_user(user_id: int, db=Depends(get_db)):
++    db.execute("DELETE FROM users WHERE id = ?", (user_id,))
++    db.commit()
++    return {"deleted": user_id}

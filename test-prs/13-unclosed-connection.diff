@@ -1,0 +1,10 @@
+PR title: Add report query
+
+diff --git a/app/reports.py b/app/reports.py
+--- a/app/reports.py
++++ b/app/reports.py
+@@ -0,0 +1,4 @@
++def count_orders():
++    conn = sqlite3.connect("orders.db")
++    cur = conn.execute("SELECT COUNT(*) FROM orders")
++    return cur.fetchone()[0]

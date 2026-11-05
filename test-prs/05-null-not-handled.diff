@@ -1,0 +1,9 @@
+PR title: Add email normalizer
+
+diff --git a/app/profile.py b/app/profile.py
+--- a/app/profile.py
++++ b/app/profile.py
+@@ -0,0 +1,3 @@
++def get_email(db, user_id):
++    user = db.get(user_id)
++    return user.email.lower()

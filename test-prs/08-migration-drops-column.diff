@@ -1,0 +1,8 @@
+PR title: Clean up users table
+
+diff --git a/migrations/0042_cleanup_users.sql b/migrations/0042_cleanup_users.sql
+--- a/migrations/0042_cleanup_users.sql
++++ b/migrations/0042_cleanup_users.sql
+@@ -0,0 +1,2 @@
++ALTER TABLE users DROP COLUMN email;
++ALTER TABLE users DROP COLUMN phone;

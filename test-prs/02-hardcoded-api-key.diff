@@ -1,0 +1,16 @@
+PR title: Add payment client
+
+diff --git a/app/payment_client.py b/app/payment_client.py
+--- a/app/payment_client.py
++++ b/app/payment_client.py
+@@ -0,0 +1,10 @@
++import requests
++
++API_KEY = "FAKE_KEY_for_testing_only"
++
++def create_charge(amount, token):
++    return requests.post(
++        "https://api.payments.example/v1/charges",
++        headers={"Authorization": "Bearer " + API_KEY},
++        json={"amount": amount, "source": token},
++    ).json()
