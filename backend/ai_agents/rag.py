@@ -86,11 +86,11 @@ def retrieve(query: str, n_results: int = 3) -> list[dict]:
         ingest_documents()
 
     query_vector = list(embedder.embed([query]))[0].tolist()
-    results = qdrant.query_points(
+    results = qdrant.search(
         collection_name=COLLECTION_NAME,
-        query=query_vector,
-        limit=n_results
-    ).points
+        query_vector=query_vector,
+        limit=n_results,
+    )
 
     chunks = []
     for r in results:
