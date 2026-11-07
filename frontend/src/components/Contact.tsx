@@ -33,7 +33,7 @@ export default function Contact() {
 
   const benefits = [
     "4 AI agents working together — Triage, Knowledge, Response, Escalation",
-    "Auto-classifies and prioritizes every PR instantly",
+    "Auto-classifies and prioritizes every PR automatically",
     "Real AI-generated review comments using Groq LLM",
     "Open source — inspect every line of code",
   ];

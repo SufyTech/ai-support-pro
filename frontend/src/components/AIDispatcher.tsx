@@ -105,12 +105,12 @@ export default function AIDispatcher({ onReviewCreated }: AIDispatcherProps) {
             </span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black mb-3 sm:mb-4">
-            Test our AI agents in real-time
+            Test our AI agents live
           </h2>
           <p className="text-sm sm:text-base text-text-muted max-w-2xl mx-auto px-2 sm:px-0">
             Submit a PR title and code diff, and watch our AI agents
             automatically triage risk, review the change, and generate a verdict
-            in milliseconds.
+            in seconds.
           </p>
         </motion.div>
 
@@ -260,7 +260,7 @@ export default function AIDispatcher({ onReviewCreated }: AIDispatcherProps) {
                       AI Review Complete
                     </h3>
                     <p className="text-sm text-text-muted">
-                      Processed in milliseconds
+                      Processed in seconds
                     </p>
                   </div>
                 </div>

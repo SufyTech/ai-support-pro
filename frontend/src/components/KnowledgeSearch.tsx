@@ -109,7 +109,7 @@ export default function KnowledgeSearch() {
           </h2>
           <p className="text-text-muted max-w-2xl mx-auto">
             Our AI searches your security checklist and style guide to answer
-            code review questions instantly — powered by RAG.
+            code review questions quickly — powered by RAG.
           </p>
         </motion.div>
 

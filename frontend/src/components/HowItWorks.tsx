@@ -22,7 +22,7 @@ const steps = [
     number: "03",
     title: "Observe the Review Pipeline",
     description:
-      "Track triage, risk classification, and review generation in real time. Changes touching auth, payments, or migrations are automatically escalated for human sign-off.",
+      "See which agents ran, the risk level, and the review comment. Changes touching auth, payments, secrets, or migrations are automatically escalated for human sign-off.",
   },
 ];
 
@@ -45,12 +45,12 @@ export default function HowItWorks() {
           </span>
           <h2 className="font-display text-4xl md:text-6xl font-bold tracking-tight">
             Sign in, submit a PR,
-            <br /> see it reviewed live.
+            <br /> see it reviewed.
           </h2>
         </div>
         <p className="text-lg text-text-secondary max-w-sm mt-6 md:mt-0">
-          A fully working multi-agent system — authenticate and watch your first
-          review happen in real time.
+          A working multi-agent system — authenticate and get your first
+review in seconds.
         </p>
       </motion.div>
 

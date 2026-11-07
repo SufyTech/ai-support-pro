@@ -131,7 +131,7 @@ export default function ReviewList({ reviews, loading }: ReviewListProps) {
             </h2>
             <p className="text-text-secondary max-w-md mx-auto leading-relaxed">
               No reviews yet. Submit a PR above to see our AI agents analyze,
-              triage risk, and respond in real-time!
+              triage risk, and respond in seconds!
             </p>
           </motion.div>
         </div>
@@ -160,7 +160,7 @@ export default function ReviewList({ reviews, loading }: ReviewListProps) {
             </div>
           </div>
           <p className="text-text-muted">
-            Watch our AI agents review pull requests in real-time
+            Watch our AI agents review pull requests live
           </p>
         </motion.div>
 

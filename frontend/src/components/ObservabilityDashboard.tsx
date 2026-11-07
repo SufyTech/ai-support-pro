@@ -141,7 +141,7 @@ export default function ObservabilityDashboard({
 
   const escData = stats
     ? [
-        { name: "AI Approved", value: stats.normal || 0 },
+        { name: "AI Reviewed", value: stats.normal || 0 },
         { name: "Human Review", value: stats.escalated || 0 },
       ]
     : [];
@@ -367,9 +367,9 @@ export default function ObservabilityDashboard({
                 glow: "rgba(239,68,68,0.15)",
               },
               {
-                label: "AI Approved",
+                label: "AI Reviewed",
                 value: stats?.normal ?? 0,
-                sub: "Fully automated",
+                sub: "Not escalated",
                 icon: "🤖",
                 color: "#10b981",
                 glow: "rgba(16,185,129,0.15)",

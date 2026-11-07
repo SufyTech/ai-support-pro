@@ -159,7 +159,7 @@ export default function Agents() {
         </p>
         <div className="flex items-center justify-center gap-2 text-xs text-text-muted">
           <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-          <span>All agents orchestrated in real-time during beta</span>
+          <span>All agents orchestrated on every review during beta</span>
         </div>
       </motion.div>
     </section>
